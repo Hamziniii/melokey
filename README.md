@@ -1,7 +1,7 @@
 # Your final project name goes here
-TBD
+## TBD
 # Your team member names and uic emails go here
-Angel Carbajal -
+Angel Carbajal - acarba4@uic.edu <br>
 Hamza Gaziuddin - hgazi2@uic.edu
 # Your GitHub repository link goes here
 If you have a private repository, please add `kaytwo` and `sauravjoshi` as collaborators. ✔️
