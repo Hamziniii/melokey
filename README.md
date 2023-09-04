@@ -4,6 +4,7 @@
 Angel Carbajal - acarba4@uic.edu <br>
 Hamza Gaziuddin - hgazi2@uic.edu
 # Your GitHub repository link goes here
+https://github.com/Hamziniii/spotify-utility-tool <br>
 If you have a private repository, please add `kaytwo` and `sauravjoshi` as collaborators. ✔️
 
 ## What does your application do?
