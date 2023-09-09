@@ -1,5 +1,4 @@
-# Your final project name goes here
-## TBD
+# Melokey
 
 # Your team member names and uic emails go here
 Angel Carbajal - acarba4@uic.edu <br>
