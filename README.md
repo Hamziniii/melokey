@@ -11,9 +11,9 @@ If you have a private repository, please add `kaytwo` and `sauravjoshi` as colla
 
 
 ## What does your application do?
-A utility tool that interfaces with the Spotify API for better playlist management. Many Spotify tools use Spotify's playlist system underneath, which is not desireable for certain users looking for more flexible ways to organize music. With our tool, users tag songs they listen to with labels which are used to dynamically create playlists. Songs can have multiple labels, making it easy for the user to search through and make different kinds of playlists automatically instead of manually adding the same song to several playlists. 
+A utility tool that interfaces with the Spotify API for better playlist management. Many Spotify tools use Spotify's playlist system underneath, which is not desirable for certain users looking for more flexible ways to organize music. With our tool, users tag songs they listen to with labels which are used to dynamically create playlists. Songs can have multiple labels, making it easy for the user to search through and make different kinds of playlists automatically instead of manually adding the same song to several playlists.
 
-In addition, our tool shows users patterns that might arise from how they are tagging their songs. Spotify internally tracks a lot of statistics for songs, we can take these statistics and show users pattern thats arise from how they are tagging their songs (people love looking at stats!). We can also do the same thing for a user's top 50 songs for the month and year.
+In addition, our tool shows users patterns that might arise from how they are tagging their songs. Spotify internally tracks a lot of statistics for songs, we can take these statistics and show users patterns that arise from how they are tagging their songs (people love looking at stats!). We can also do the same thing for a user's top 50 songs for the month and year.
 
 
 ## What makes it different than a CRUD app? I.e., what functionality does it provide that is not just a user interface layer on top of a database of user information,and the ability to view / add to / change that information?
