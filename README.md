@@ -6,7 +6,8 @@ Hamza Gaziuddin - hgazi2@uic.edu
 
 
 # Your GitHub repository link goes here
-https://github.com/Hamziniii/spotify-utility-tool <br>
+https://github.com/Hamziniii/melokey <br>
+https://melokey.vercel.app/
 If you have a private repository, please add `kaytwo` and `sauravjoshi` as collaborators. ✔️
 
 
