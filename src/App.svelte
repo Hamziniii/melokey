@@ -21,7 +21,7 @@
   
       <div>
         <p>1. Welcome to <a href="https://github.com/Hamziniii/melokey">melokey</a>! 🎶</p>
-        <p>2. Here is our <a href="https://excalidraw.com/#json=L2pazNycfDBVBGyOVsnSn,rTZJKsWRjmqsfCDZsihchg">excalidraw</a> <br>(with MVP & more info)</p>
+        <p>2. Here is our <a href="https://excalidraw.com/#json=9Ko558DWG_JrjlVW862ie,4eOLSgts92irykVo9Ync-Q">excalidraw</a> <br>(with MVP & more info)</p>
       </div>
     </div>
   </div>
