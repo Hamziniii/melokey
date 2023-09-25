@@ -6,14 +6,22 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "lint": "DEBUG=eslint:cli-engine eslint src --max-warnings 0",
+    "format": "prettier src --check"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.4.2",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
     "autoprefixer": "^10.4.16",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
     "postcss": "^8.4.30",
+    "prettier": "^3.0.3",
     "svelte": "^4.0.5",
     "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2",
     "vite": "^4.4.5"
   }
 }

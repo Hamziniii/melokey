@@ -38,25 +38,24 @@ body {
 }
 
 body {
-	/* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
-	/* background: linear-gradient(-45deg, #221c2e, #1c1d2e, #241c2e); */
-	background-size: 400% 400%;
-	animation: gradient 15s ease infinite;
-	height: 100vh;
+  /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
+  /* background: linear-gradient(-45deg, #221c2e, #1c1d2e, #241c2e); */
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  height: 100vh;
 }
 
 @keyframes gradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
-
 
 h1 {
   font-size: 3.2em;
