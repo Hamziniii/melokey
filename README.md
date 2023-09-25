@@ -1,4 +1,6 @@
 # Melokey 🎶
+🚧 Site Under Construction 🚧 <br>
+https://melokey.vercel.app/
 
 # Your team member names and uic emails go here
 Angel Carbajal - acarba4@uic.edu <br>
@@ -6,7 +8,7 @@ Hamza Gaziuddin - hgazi2@uic.edu
 
 
 # Your GitHub repository link goes here
-https://github.com/Hamziniii/spotify-utility-tool <br>
+https://github.com/Hamziniii/melokey <br>
 If you have a private repository, please add `kaytwo` and `sauravjoshi` as collaborators. ✔️
 
 
