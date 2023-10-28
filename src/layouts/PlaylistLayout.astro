@@ -1,0 +1,56 @@
+---
+import type { Page, Playlist } from "@spotify/web-api-ts-sdk";
+import Layout from "./Layout.astro";
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+
+const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
+if (!spotifyAccessToken) {
+  return Astro.redirect("/?error=token_missing");
+}
+
+// TODO this is paginated with an offset. get all playlists instead of just the first 20
+const result = await fetch("https://api.spotify.com/v1/me/playlists", {
+  method: "GET",
+  headers: { Authorization: `Bearer ${spotifyAccessToken.value}` },
+});
+
+// TODO implement better error handling with feedback
+if (!result.ok) {
+  return Astro.redirect("/?error=not_authorized");
+}
+
+const playlists: Page<Playlist> = await result.json();
+---
+
+<Layout title={title}>
+  <div id="wrapper">
+    <section id="playlist-nav">
+      <details>
+        <summary>json dump</summary>
+        <pre>User Data: {JSON.stringify(playlists, null, 2)}</pre>
+      </details>
+
+      {
+        playlists.items.map((playlist) => (
+          <li>
+            <a href={"/playlist/" + playlist.id}>{playlist.name}</a>
+          </li>
+        ))
+      }
+    </section>
+    <main>
+      <slot />
+    </main>
+  </div>
+</Layout>
+
+<style>
+  #wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+</style>

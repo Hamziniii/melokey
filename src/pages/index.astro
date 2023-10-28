@@ -3,6 +3,12 @@ import Layout from "../layouts/Layout.astro";
 // nodejs import crypto module
 import { createHash } from "node:crypto";
 
+// check if the user is logged in before doing anything
+const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
+if (spotifyAccessToken) {
+  return Astro.redirect("/user-info-test");
+}
+
 const SPOTIFY_CLIENT_ID = import.meta.env.SPOTIFY_CLIENT_ID;
 // const SPOTIFY_CLIENT_SECRET = import.meta.env.SPOTIFY_CLIENT_SECRET;
 const cryptoHash = createHash("sha256");
@@ -87,6 +93,6 @@ const spotifyOAuthLink = `https://accounts.spotify.com/authorize?${params.toStri
     text-align: center;
     font-weight: bold;
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 5rem;
   }
 </style>
