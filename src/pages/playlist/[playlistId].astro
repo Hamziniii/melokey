@@ -1,0 +1,46 @@
+---
+import type { Page, Playlist } from "@spotify/web-api-ts-sdk";
+import PlaylistLayout from "../../layouts/PlaylistLayout.astro";
+
+const { playlistId } = Astro.params;
+
+const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
+if (!spotifyAccessToken) {
+  return Astro.redirect("/?error=token_missing");
+}
+
+// TODO this is paginated with an offset. get all playlists instead of just the first 20
+const result = await fetch("https://api.spotify.com/v1/playlists/" + playlistId, {
+  method: "GET",
+  headers: { Authorization: `Bearer ${spotifyAccessToken.value}` },
+});
+
+// TODO implement better error handling with feedback
+if (!result.ok) {
+  console.log("error fetching playlists", await result.text());
+  return Astro.redirect("/error?error=not_authorized");
+}
+
+const playlist: Playlist = await result.json();
+---
+
+<PlaylistLayout title="Playlist Tagging Test">
+  <h1>{playlist.name}</h1>
+
+  <details>
+    <summary>json dump</summary>
+    <pre>User Data: {JSON.stringify(playlist, null, 2)}</pre>
+  </details>
+
+  {
+    playlist.tracks.items.map((playlistedTrack) => (
+      <p>
+        {playlistedTrack.track.name} : {playlistedTrack.track.uri}
+      </p>
+    ))
+  }
+</PlaylistLayout>
+
+<script lang="ts">
+console.log("wowie zowie");
+</script>

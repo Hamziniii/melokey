@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PlaylistLayout from "../layouts/PlaylistLayout.astro";
 
 const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
 if (!spotifyAccessToken) {
@@ -19,10 +20,10 @@ if (!result.ok) {
 const userData = await result.json();
 ---
 
-<Layout title="User Info Test">
+<PlaylistLayout title="User Info Test">
   <h1>User Info Test</h1>
   <details>
     <summary>json dump</summary>
     <pre>User Data: {JSON.stringify(userData, null, 2)}</pre>
   </details>
-</Layout>
+</PlaylistLayout>
