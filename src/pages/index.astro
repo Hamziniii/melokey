@@ -1,5 +1,6 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
 // nodejs import crypto module
 import { createHash } from "node:crypto";
 
@@ -54,15 +55,50 @@ Astro.cookies.set("spotify_auth_state", state);
 params.append("state", state);
 
 const spotifyOAuthLink = `https://accounts.spotify.com/authorize?${params.toString()}`;
+
+const urlParams = new URLSearchParams(Astro.request.url.split("?")[1]);
+const error = urlParams.get("error")
+let errorDescription = ""; 
+
+switch(error) {
+  case "token_missing":
+    errorDescription = "It looks like we don't have your Spotify Token! Please log into Spotify again.";
+    break;
+  case "not_authorized":
+    errorDescription = "Hmm, looks like we don't have the correct Spotify permissions. Please log into Spotify again.";
+    break;
+  case "token_error":
+    errorDescription = "Looks like there was an issue with your Spotify token. Please log into Spotify again.";
+    break;
+  default:
+    errorDescription = "Looks like there was an issue. Please log into Spotify again.";
+    break;
+}
+
 ---
 
-<Layout title="Welcome to Astro.">
+<BaseLayout title="Welcome to Astro.">
+
   <main>
-    <h1 class="font-bold">melokey</h1>
-    <p class="instructions">login first!</p>
-    <a href={spotifyOAuthLink} class="login-with-spotify">Login with Spotify</a>
+    <h1 class="font-bold pt-8 text-center text-6xl pb-8">melokey</h1>
+    {error && (
+      <div class="bg-gray-950 px-40 py-8 mb-4 rounded-xl text-center flex flex-col">
+        <h2 class="font-bold text-red-500 pb-4 text-center text-2xl">Error: {error}</h2>
+        <p class="text-base text-gray-400 font-thin">
+          {errorDescription}
+        </p>
+      </div>
+    )}
+    <div class="bg-gray-950 px-48 py-8 rounded-xl flex flex-col">
+      <h2 class="font-bold pb-8 text-center text-3xl">Login to Spotify!</h2>
+      <a href={spotifyOAuthLink} class="login-with-spotify">Login</a>
+      <hr class="m-4 border-gray-700">
+      <p class="text-sm text-gray-400 font-thin">
+        In order to access your Spotify details, we require users to authenticate via OAuth. Do note that if you have not previously contacted the owners of this application with your Account details, you will get an authentication error.
+      </p>
+    </div>
   </main>
-</Layout>
+</BaseLayout>
 
 <style>
   main {
@@ -74,13 +110,13 @@ const spotifyOAuthLink = `https://accounts.spotify.com/authorize?${params.toStri
     font-size: 20px;
     line-height: 1.6;
   }
-  h1 {
+  /* h1 {
     font-size: 4rem;
     font-weight: 700;
     line-height: 1;
     text-align: center;
     margin-bottom: 1em;
-  }
+  } */
   .instructions {
     margin-bottom: 2rem;
     background: rgb(12, 75, 70);
