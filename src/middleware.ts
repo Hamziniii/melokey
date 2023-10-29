@@ -25,7 +25,7 @@ export const onRequest  = defineMiddleware(async ({cookies, redirect, url, local
       clientId: import.meta.env.SPOTIFY_CLIENT_ID, 
       token: {
         access_token: spotifyAccessToken,
-        refresh_token: spotifyRefreshToken,
+        refresh_token: "", // we dont actually want it to refresh
         token_type: "Bearer",
         expires_in: 3600,
       }

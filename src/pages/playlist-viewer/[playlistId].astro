@@ -1,0 +1,12 @@
+---
+import UserLayout from "../../layouts/UserLayout.astro";
+import type { Locals } from "../../middleware";
+import Playlist from "../../components/Playlist"
+
+const { playlistId } = Astro.params;
+const sdkProps = (Astro.locals as Locals).sdkProps;
+---
+
+<UserLayout title="Viewing Playlist">
+  <Playlist sdkProps={sdkProps} playlistId={playlistId ?? ""} client:load/>
+</UserLayout>

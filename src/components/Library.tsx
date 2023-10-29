@@ -8,14 +8,14 @@ function Pill({text, active = false}: {text: string, active?: boolean}) {
 
 function LibraryTile({playlist}: {playlist: SimplifiedPlaylist}) {
   const image = playlist.images[0]?.url
-  return <div className="flex flex-row gap-2">
+  return <div className="flex flex-row gap-2 h-12 cursor-pointer" onClick={() => { window.location.href = "/playlist-viewer/" + playlist.id}}>
     {image ?
      <img src={image} className="w-12 h-12 rounded-md" /> :
       <div className="w-12 h-12 rounded-md bg-gray-900 text-gray-500">
         no image
       </div>
     }
-    <h3 className="text-base text-gray-400 transition-colors duration-150 ease-in-out hover:text-white">{playlist.name}</h3>
+    <h3 className="text-base overflow-hidden whitespace-nowrap text-ellipsis text-gray-400 transition-colors duration-150 ease-in-out hover:text-white">{playlist.name}</h3>
   </div>
 }
 
@@ -27,7 +27,7 @@ export default function Library({sdkProps}: {sdkProps: SdkProps}) {
   useEffect(() => {
     const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
     setSdk(_sdk)
-    _sdk.currentUser.playlists.playlists().then((playlists) => setPlaylists([...playlists.items, ...playlists.items]))
+    _sdk.currentUser.playlists.playlists().then(playlist => setPlaylists(playlist.items))
   }, [])
 
   return <div className="flex flex-col h-full">
