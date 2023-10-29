@@ -1,14 +1,37 @@
+import type { AccessToken } from "@spotify/web-api-ts-sdk";
 import { defineMiddleware } from "astro:middleware"
 
+// Locations that do not need to be authenticated
 const blacklist = ["/api/spotify/callback", "/", "/logout"]
 
-export const onRequest  = defineMiddleware(async ({cookies, redirect, url}, next) => {
+export type SdkProps = {
+  token: AccessToken,
+  clientId:  string
+}
+
+export type Locals = App.Locals & {
+  sdkProps: SdkProps
+}
+
+export const onRequest  = defineMiddleware(async ({cookies, redirect, url, locals}, next) => {
   if(blacklist.includes(url.pathname)) return next();
 
   const spotifyAccessToken = cookies.get("spotify_access_token")?.value;
   const spotifyRefreshToken = cookies.get("spotify_refresh_token")?.value;
 
-  if (spotifyAccessToken && spotifyRefreshToken) return next();
+  if (spotifyAccessToken && spotifyRefreshToken) {
+    const spotifyAccessToken = cookies.get("spotify_access_token")!.value;
+    (locals as Locals).sdkProps = {
+      clientId: import.meta.env.SPOTIFY_CLIENT_ID, 
+      token: {
+        access_token: spotifyAccessToken,
+        refresh_token: spotifyRefreshToken,
+        token_type: "Bearer",
+        expires_in: 3600,
+      }
+    };
+    return next();
+  }
   
   if (!spotifyRefreshToken) return redirect("/?error=tokens_missing");
 

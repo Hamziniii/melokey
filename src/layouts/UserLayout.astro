@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro'
 import Library from '../components/Library'
+import type { Locals } from '../middleware';
 
 interface Props {
   title: string;
@@ -14,16 +15,12 @@ const navLinks = [
 ];
 
 const url = new URL(Astro.request.url);
+
+const sdkProps = (Astro.locals as Locals).sdkProps;
 ---
 <BaseLayout title={title}>
-  <!-- <nav class="mb-4">
-    <a class="bg-indigo-500 text-white no-underline px-4 py-2 mr-4" href="/">home</a>
-    <a class="bg-indigo-500 text-white no-underline px-4 py-2 mr-4" href="/user-info-test">user json dump</a>
-    <a class="bg-indigo-500 text-white no-underline px-4 py-2 mr-4" href="/playlist-tagging-test">tagging test</a>
-  </nav>
-  <slot /> -->
   <div class="p-2 bg-zinc-950 h-full flex flex-row gap-2">
-    <aside class="w-72 flex flex-col gap-2">
+    <aside class="w-96 flex flex-col gap-2">
       <nav class="p-4 bg-zinc-900 rounded-lg">
         <ul>
           {navLinks.map(navLink => (
@@ -34,7 +31,7 @@ const url = new URL(Astro.request.url);
         </ul>
       </nav>
       <div class="p-4 flex-grow bg-zinc-900 rounded-lg">
-        <Library />
+        <Library sdkProps={sdkProps} client:load/>
       </div>
     </aside>
     <slot />

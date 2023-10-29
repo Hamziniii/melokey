@@ -1,16 +1,13 @@
 ---
 import UserLayout from "../layouts/UserLayout.astro";
-import PlaylistLayout from "../layouts/PlaylistLayout.astro";
-
-const spotifyAccessToken = Astro.cookies.get("spotify_access_token")!;
-
+import type { Locals } from "../middleware";
 
 const time = new Date().getHours();
 const greeting = time < 12 ? "Morning" : time < 18 ? "Afternoon" : "Evening";
-
+const sdkProps = (Astro.locals as Locals).sdkProps;
 ---
 <UserLayout title="Home">
   <div class="p-4 w-full h-full flex-grow bg-zinc-900 rounded-lg">
-    <h1 class="text-2xl font-bold text-white">Good {greeting} </h1>
+    <h1 class="text-3xl mt-4 font-bold text-white">Good {greeting} </h1>
   </div>
 </UserLayout>
