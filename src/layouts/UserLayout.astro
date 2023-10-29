@@ -30,7 +30,7 @@ const sdkProps = (Astro.locals as Locals).sdkProps;
           ))}
         </ul>
       </nav>
-      <div class="p-4 flex-grow bg-zinc-900 rounded-lg">
+      <div class="p-4 flex-grow overflow-y-hidden bg-zinc-900 rounded-lg">
         <Library sdkProps={sdkProps} client:load/>
       </div>
     </aside>
