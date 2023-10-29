@@ -2,13 +2,15 @@ import { defineMiddleware } from "astro:middleware"
 
 const blacklist = ["/api/spotify/callback", "/"]
 
-export const onRequest  = defineMiddleware(async ({cookies, redirect, url, locals}, next) => {
+export const onRequest  = defineMiddleware(async ({cookies, redirect, url}, next) => {
   if(blacklist.includes(url.pathname)) return next();
 
   const spotifyAccessToken = cookies.get("spotify_access_token")?.value;
   const spotifyRefreshToken = cookies.get("spotify_refresh_token")?.value;
 
-  if (!spotifyAccessToken || !spotifyRefreshToken) return redirect("/?error=tokens_missing");
+  if (spotifyAccessToken && spotifyRefreshToken) return next();
+  
+  if (!spotifyRefreshToken) return redirect("/?error=tokens_missing");
 
   const payload = {
     method: "POST",
@@ -24,12 +26,22 @@ export const onRequest  = defineMiddleware(async ({cookies, redirect, url, local
 
   try {    
     const body = await fetch("https://accounts.spotify.com/api/token", payload).then(res => res.json());
-    const { access_token, expires_in } = body;
+    const { access_token, expires_in, refresh_token } = body;
+
+    console.log(body)
+
     cookies.set("spotify_access_token", access_token, {
       maxAge: expires_in,
       path: "/",
     });
+
+    cookies.set("spotify_refresh_token", refresh_token, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 10,
+    });
   } catch (e) {
+    // Refresh token could be expired !!
+    console.error(e);
     return redirect("/?error=token_error");
   }
 
