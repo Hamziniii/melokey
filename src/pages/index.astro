@@ -57,6 +57,8 @@ params.append("state", state);
 const spotifyOAuthLink = `https://accounts.spotify.com/authorize?${params.toString()}`;
 
 const error = Astro.url.searchParams.get("error")
+const loggedOut = Astro.url.searchParams.get("logout")
+
 let errorDescription = ""; 
 
 switch(error) {
@@ -88,12 +90,20 @@ switch(error) {
         </p>
       </div>
     )}
+    {loggedOut && (
+      <div class="bg-gray-950 px-40 py-8 mb-4 rounded-xl text-center flex flex-col">
+        <h2 class="font-bold text-gray-300 pb-4 text-center text-2xl">Logged Out</h2>
+        <p class="text-base text-gray-400 font-thin">
+          You have been logged out of your Spotify account. Please log in again.
+        </p>
+      </div>
+    )}
     <div class="bg-gray-950 px-48 py-8 rounded-xl flex flex-col">
       <h2 class="font-bold pb-8 text-center text-3xl">Login to Spotify!</h2>
       <a href={spotifyOAuthLink} class="login-with-spotify">Login</a>
       <hr class="m-4 border-gray-700">
       <p class="text-sm text-gray-400 font-thin">
-        In order to access your Spotify details, we require users to authenticate via OAuth. Do note that if you have not previously contacted the owners of this application with your Account details, you will get an authentication error.
+        In order to access your Spotify details, we require users to authenticate via OAuth. Do note that if you have not previously contacted the owners of this application with your Account details, you will get an authentication error. If you wish to delete your data call the <i>WAAambulance</i> cause we got a crybaby over here.
       </p>
     </div>
   </main>

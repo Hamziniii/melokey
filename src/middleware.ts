@@ -1,6 +1,6 @@
 import { defineMiddleware } from "astro:middleware"
 
-const blacklist = ["/api/spotify/callback", "/"]
+const blacklist = ["/api/spotify/callback", "/", "/logout"]
 
 export const onRequest  = defineMiddleware(async ({cookies, redirect, url}, next) => {
   if(blacklist.includes(url.pathname)) return next();
