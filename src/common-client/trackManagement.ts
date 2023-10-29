@@ -1,9 +1,9 @@
 import type { Track } from "@spotify/web-api-ts-sdk";
-import { getTag } from "./tagManagement";
+import { getTagById } from "./tagManagement";
 
 // get list of tracks for a tag
 export function getTracksForTag(id: string): Array<Track> {
-  const tag = getTag(id);
+  const tag = getTagById(id);
 
   if (!tag) {
     throw new Error("Tag " + id + " doesn't exist!");
@@ -20,7 +20,7 @@ export function getTracksForTag(id: string): Array<Track> {
 
 export function addTrackToTagList(trackData: Track, tagId: string) {
   // check if tag even exists
-  const tag = getTag(tagId);
+  const tag = getTagById(tagId);
 
   if (!tag) {
     throw new Error("Tag " + tagId + " doesn't exist!");
