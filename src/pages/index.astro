@@ -7,7 +7,7 @@ import { createHash } from "node:crypto";
 // check if the user is logged in before doing anything
 const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
 if (spotifyAccessToken) {
-  return Astro.redirect("/user-info-test");
+  return Astro.redirect("/home");
 }
 
 const SPOTIFY_CLIENT_ID = import.meta.env.SPOTIFY_CLIENT_ID;
@@ -56,8 +56,7 @@ params.append("state", state);
 
 const spotifyOAuthLink = `https://accounts.spotify.com/authorize?${params.toString()}`;
 
-const urlParams = new URLSearchParams(Astro.request.url.split("?")[1]);
-const error = urlParams.get("error")
+const error = Astro.url.searchParams.get("error")
 let errorDescription = ""; 
 
 switch(error) {
