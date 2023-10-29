@@ -32,15 +32,76 @@ const playlist: Playlist = await result.json();
     <pre>User Data: {JSON.stringify(playlist, null, 2)}</pre>
   </details>
 
-  {
-    playlist.tracks.items.map((playlistedTrack) => (
-      <p>
-        {playlistedTrack.track.name} : {playlistedTrack.track.uri}
-      </p>
-    ))
-  }
+  <dialog>
+    <form method="dialog"></form>
+  </dialog>
+
+  <div id="wrapper">
+    {
+      playlist.tracks.items.map((playlistedTrack) => {
+        const splitUri = playlistedTrack.track.uri.split(":");
+
+        const isLocalTrack = splitUri[1] === "local";
+
+        const trackUrl = isLocalTrack ? playlistedTrack.track.uri : `https://open.spotify.com/track/${splitUri[2]}`;
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              gap: "1rem",
+              ...(isLocalTrack ? { backgroundColor: "#000", color: "#555" } : {}),
+            }}
+          >
+            <a href={trackUrl} target="_blank">
+              {playlistedTrack.track.name}
+            </a>
+
+            <button data-track-data={JSON.stringify(playlistedTrack.track)} class="add-tag-button">
+              add tag
+            </button>
+          </div>
+        );
+      })
+    }
+  </div>
 </PlaylistLayout>
 
-<script lang="ts">
-console.log("wowie zowie");
+<style>
+  #wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  button {
+    padding: 0.3rem;
+    background-color: rgb(11, 143, 143);
+  }
+</style>
+
+<script>
+  import type { Track } from "@spotify/web-api-ts-sdk";
+
+  const buttons = document.querySelectorAll("button.add-tag-button");
+
+  // Handle clicks on each button.
+  buttons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      const htmlElement = event.target;
+      if (!(htmlElement instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      if (!htmlElement.dataset.trackData) {
+        return;
+      }
+
+      const trackData: Track = JSON.parse(htmlElement.dataset.trackData);
+      if (!trackData) {
+        return;
+      }
+      console.log(trackData);
+      console.log("Button was clicked!");
+    });
+  });
 </script>
