@@ -26,10 +26,16 @@ export function getTagList(): Tag[] {
 export function createNewTag({ name, color }: BaseTag) {
   const tagList = getTagList();
 
+  // check that tag already exists
+  const tagExists = tagList.some((tag) => tag.name === name);
+  if (tagExists) {
+    throw new Error("Tag " + name + " already exists!");
+  }
+
   const newTag = {
     id: Date.now().toString(),
-    name: "New Tag",
-    color: "#000000",
+    name,
+    color,
   };
 
   tagList.push(newTag);
@@ -56,8 +62,15 @@ export function updateTag({ id, name, color }: Tag) {
 }
 
 // get tag by id
-export function getTag(id: string): Tag | undefined {
+export function getTagById(id: string): Tag | undefined {
   const tagList = getTagList();
 
   return tagList.find((tag) => tag.id === id);
+}
+
+// get tag by name
+export function getTagByName(name: string): Tag | undefined {
+  const tagList = getTagList();
+
+  return tagList.find((tag) => tag.name === name);
 }
