@@ -28,8 +28,6 @@ export const onRequest  = defineMiddleware(async ({cookies, redirect, url}, next
     const body = await fetch("https://accounts.spotify.com/api/token", payload).then(res => res.json());
     const { access_token, expires_in, refresh_token } = body;
 
-    console.log(body)
-
     cookies.set("spotify_access_token", access_token, {
       maxAge: expires_in,
       path: "/",
