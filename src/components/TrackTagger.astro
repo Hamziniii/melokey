@@ -1,0 +1,94 @@
+---
+import type { Episode, Track } from "@spotify/web-api-ts-sdk";
+interface Props {
+  track: Track;
+}
+
+const { track } = Astro.props;
+
+// generate a random id for the dialog
+// TODO wildly inefficient terrible hacky way to do this component, replace this with some react thing probably
+const dialogId = Math.random().toString(36).substring(2, 15);
+const uniqueComponentId = track.uri + "-" + dialogId;
+---
+
+<button data-track-data={JSON.stringify(track)} id="show-track-tagger-dialog"> add tag</button>
+
+<dialog id={"track-tagger-dialog" + uniqueComponentId}>
+  <form id={"track-tagger-form" + uniqueComponentId}>
+    <p>add tag to {track.name}</p>
+    <p id="track-tagger-form-feedback"></p>
+    <div id="track-tagger-taglist"></div>
+    <div>
+      <button value="" formmethod="dialog" class="bg-gray-600">Cancel</button>
+      <button id="submit-track-tags-button" value="" class="bg-green-500">Confirm</button>
+    </div>
+  </form>
+</dialog>
+
+<style>
+  button {
+    padding: 0.3rem;
+    background-color: rgb(11, 143, 143);
+  }
+</style>
+
+<script>
+  import { getTagList } from "../common-client/tagManagement";
+
+  const tagList = getTagList();
+
+  /*
+  for each tag, make this html:
+  <input type="checkbox" id="scales" name="scales" checked />
+  <label for="scales">Scales</label>
+
+  put it in the #track-tagger-taglist element
+  */
+
+  ///////////
+  const showDialogButton = document.getElementById("show-track-tagger-dialog")! as HTMLButtonElement;
+  const trackTaggerDialog = document.getElementById("track-tagger-dialog")! as HTMLDialogElement;
+  const confirmBtn = document.getElementById("submit-track-tags-button")! as HTMLButtonElement;
+  const formFeedbackText = document.getElementById("track-tagger-form-feedback")! as HTMLParagraphElement;
+  ///////////
+
+  showDialogButton.addEventListener("click", () => {
+    trackTaggerDialog.showModal();
+  });
+
+  ///////////  custom tag logic
+  const form = document.getElementById("track-tagger-form")! as HTMLFormElement;
+  const feedback = trackTaggerDialog.querySelector("#track-tagger-form-feedback");
+
+  const trackTaggerTaglist = trackTaggerDialog.querySelector("#track-tagger-taglist") as HTMLDivElement;
+
+  const tagInputs = tagList.map((tag) => {
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.id = tag.id;
+    input.name = tag.name;
+    input.checked = false;
+
+    const label = document.createElement("label");
+    label.htmlFor = tag.id;
+    label.textContent = tag.name;
+
+    const div = document.createElement("div");
+    div.append(input, label);
+    return div;
+  });
+
+  trackTaggerTaglist.append(...tagInputs);
+
+  confirmBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    const selectedTags = Array.from(form.elements)
+      // oops !
+      .filter((element: any) => element.checked)
+      .map((element: any) => element.name);
+
+    console.log(selectedTags);
+  });
+</script>
