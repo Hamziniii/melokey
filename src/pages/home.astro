@@ -15,7 +15,7 @@ const tags = ["tag1", "tag2", "tag3"]
 const playlists = (await sdk.currentUser.playlists.playlists(10)).items
 ---
 <UserLayout title="Home">
-  <div class="p-4 w-full h-full flex-grow bg-zinc-900 rounded-lg overflow-y-auto">
+  <div class="p-4 w-full h-full flex-grow transition-all ease-in-out bg-gradient-to-b from-slate-900 rounded-lg overflow-y-auto">
     <h1 class="text-3xl mt-4 font-bold text-white">Good {greeting}, {name}! </h1>
     <h2 class="text-2xl mt-4 font-bold text-white">Your Tags</h2>
     <div class="flex flex-row flex-wrap">

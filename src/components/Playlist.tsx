@@ -95,7 +95,7 @@ export default function Playlist({sdkProps, playlistId}: {sdkProps: SdkProps, pl
           <tr className="sticky top-0 backdrop-blur-lg pt-4">
             <th className="text-left text-sm font-thin text-gray-300 m-4 py-4">Title</th>
             <th className="text-left text-sm font-thin text-gray-300">Album</th>
-            <th className="text-left text-sm font-thin text-gray-300">Added</th>
+            {/* <th className="text-left text-sm font-thin text-gray-300">Added</th> */}
             <th className="text-left text-sm font-thin text-gray-300">Duration</th>
           </tr>
         </thead>
@@ -111,7 +111,7 @@ export default function Playlist({sdkProps, playlistId}: {sdkProps: SdkProps, pl
                 </div>
               </td>
               <td className="text-sm font-thin text-gray-400">{track.album.name || "N/A"}</td>
-              <td className="text-sm font-thin text-gray-400">{new Date(t.added_at).toDateString()}</td>
+              {/* <td className="text-sm font-thin text-gray-400">{new Date(t.added_at).toDateString()}</td> */}
               <td className="text-sm font-thin text-gray-400">{msToTime(track.duration_ms)}</td>
             </tr>
           })}

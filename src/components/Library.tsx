@@ -15,7 +15,10 @@ function LibraryTile({playlist}: {playlist: SimplifiedPlaylist}) {
         no image
       </div>
     }
-    <h3 className="text-base overflow-hidden whitespace-nowrap text-ellipsis text-gray-400 transition-colors duration-150 ease-in-out hover:text-white">{playlist.name}</h3>
+    <div className="flex flex-col w-full">
+      <h2 className="text-base overflow-hidden whitespace-nowrap text-ellipsis text-gray-400 transition-colors duration-150 ease-in-out hover:text-white">{playlist.name}</h2>
+      <h3 className="text-sm font-thin text-gray-300">{playlist.tracks?.total} Songs</h3>
+    </div>
   </div>
 }
 
