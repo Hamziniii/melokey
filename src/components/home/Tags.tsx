@@ -29,7 +29,7 @@ export default function TagsView({tagCount = 4} : {tagCount?: number}) {
 
   return <>
   {tags.map(tag => (
-      <div key={tag.id} className="my-4 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a] cursor-pointer">
+      <div key={tag.id} className="my-4 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a] cursor-pointer" onClick={() => window.location.href = `/tag/${tag.id}`}>
         <div className="bg-gradient-to-b from-slate-600 to-bg-zinc-800 rounded-lg h-36 w-36 mb-4 text-gray-500 text-4xl" style={{"--tw-gradient-from": tag.color} as React.CSSProperties}/>
         <p className="text-white">{tag.name}</p>
         <p className="text-gray-400 font-thin">Tag</p>

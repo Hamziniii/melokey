@@ -31,7 +31,8 @@ export default function Playlists({sdkProps, playlistCount = 4}: {sdkProps: SdkP
     const image = playlist.images[0]?.url
   
     return (
-      <div playlist-id={playlist.id} className="my-2 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a] cursor-pointer">
+      <div playlist-id={playlist.id} className="my-2 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a] cursor-pointer"
+        onClick={() => window.location.href = `/playlist-viewer/${playlist.id}`}>
         {
           image ? (
             <div className="bg-zinc-800 rounded-lg h-36 w-36 mb-4">

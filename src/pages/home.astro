@@ -31,12 +31,3 @@ const name = user.display_name
     </div>
   </div>
 </UserLayout>
-
-<script>
-document.querySelectorAll("div[playlist-id]").forEach(el => {
-  el.addEventListener("click", () => {
-    const id = el.getAttribute("playlist-id")
-    window.location.href = `/playlist-viewer/${id}`
-  })
-})
-</script>
