@@ -36,7 +36,8 @@ const timeLeft = expires_in ? Math.max(parseInt(expires_in) - (new Date()).getTi
         </ul>
       </nav>
       <div class="p-4 flex-grow overflow-y-hidden bg-zinc-900 rounded-lg">
-        <Library sdkProps={sdkProps} client:load/>
+        <Library sdkProps={sdkProps}/>
+        <Library sdkProps={sdkProps} SSR={false} client:load/>
       </div>
     </aside>
     <slot />
