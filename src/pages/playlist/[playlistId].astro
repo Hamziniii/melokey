@@ -1,7 +1,7 @@
 ---
 import type { Playlist, Episode, Track } from "@spotify/web-api-ts-sdk";
 import PlaylistLayout from "../../layouts/PlaylistLayout.astro";
-import TrackTagger from "../../components/TrackTagger.astro";
+import TrackTagger from "../../TrackTagger/TrackTagger.tsx";
 
 const { playlistId } = Astro.params;
 
@@ -25,57 +25,6 @@ if (!result.ok) {
 const playlist: Playlist = await result.json();
 ---
 
-<PlaylistLayout title="Playlist Tagging Test">
-  <h1>{playlist.name}</h1>
-
-  <details>
-    <summary>json dump</summary>
-    <pre>User Data: {JSON.stringify(playlist, null, 2)}</pre>
-  </details>
-
-  <dialog>
-    <form method="dialog"></form>
-  </dialog>
-
-  <div id="wrapper">
-    {
-      playlist.tracks.items.map((playlistedTrack) => {
-        // ignore if this isnt a track (could be a podcast episode)
-        if (playlistedTrack.track.type !== "track") {
-          return;
-        }
-
-        const track = playlistedTrack.track as Track;
-        const splitUri = track.uri.split(":");
-
-        const isLocalTrack = splitUri[1] === "local";
-
-        const trackUrl = isLocalTrack ? track.uri : `https://open.spotify.com/track/${splitUri[2]}`;
-
-        return (
-          <div
-            style={{
-              display: "flex",
-              gap: "1rem",
-              ...(isLocalTrack ? { backgroundColor: "#000", color: "#555" } : {}),
-            }}
-          >
-            <a href={trackUrl} target="_blank">
-              {track.name}
-            </a>
-
-            <TrackTagger track={track} />
-          </div>
-        );
-      })
-    }
-  </div>
+<PlaylistLayout title="dashboard">
+  <TrackTagger client:only="react" playlist={playlist} />
 </PlaylistLayout>
-
-<style>
-  #wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-</style>
