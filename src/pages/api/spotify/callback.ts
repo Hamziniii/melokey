@@ -55,7 +55,13 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
     maxAge: expires_in,
     path: "/",
   });
-  
+
+  const expiry = (new Date()).getTime() + expires_in * 1000;
+  cookies.set("expires_in", "" + expiry, {
+    maxAge: expires_in,
+    path: "/",
+  }); 
+
   cookies.set("spotify_refresh_token", refresh_token, {
     path: "/",
     maxAge: 60 * 60 * 24 * 10,

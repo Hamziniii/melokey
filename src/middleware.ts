@@ -18,8 +18,12 @@ export const onRequest  = defineMiddleware(async ({cookies, redirect, url, local
 
   const spotifyAccessToken = cookies.get("spotify_access_token")?.value;
   const spotifyRefreshToken = cookies.get("spotify_refresh_token")?.value;
+  // In minutes, for easy debugging
+  const expires_in = cookies.get("expires_in")?.value;
+  const timeLeft = expires_in ? (parseInt(expires_in) - (new Date()).getTime()) / 1000 / 60 : 0;
+  const expired = timeLeft <= 5;
 
-  if (spotifyAccessToken && spotifyRefreshToken) {
+  if (spotifyAccessToken && spotifyRefreshToken && !expired) {
     const spotifyAccessToken = cookies.get("spotify_access_token")!.value;
     (locals as Locals).sdkProps = {
       clientId: import.meta.env.SPOTIFY_CLIENT_ID, 
@@ -51,10 +55,26 @@ export const onRequest  = defineMiddleware(async ({cookies, redirect, url, local
     const body = await fetch("https://accounts.spotify.com/api/token", payload).then(res => res.json());
     const { access_token, expires_in, refresh_token } = body;
 
+    (locals as Locals).sdkProps = {
+      clientId: import.meta.env.SPOTIFY_CLIENT_ID, 
+      token: {
+        access_token: access_token,
+        refresh_token: "", // we dont actually want it to refresh
+        token_type: "Bearer",
+        expires_in: 3600,
+      }
+    };
+
     cookies.set("spotify_access_token", access_token, {
       maxAge: expires_in,
       path: "/",
     });
+
+    const expiry = (new Date()).getTime() + expires_in * 1000;
+    cookies.set("expires_in", "" + expiry, {
+      maxAge: expires_in,
+      path: "/",
+    }); 
 
     cookies.set("spotify_refresh_token", refresh_token, {
       path: "/",

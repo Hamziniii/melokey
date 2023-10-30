@@ -10,13 +10,18 @@ interface Props {
 const { title } = Astro.props;
 const navLinks = [
   { href: '/home', text: 'Home' },
+  { href: '/currently-playing', text: 'Currently Playing' },
   { href: '/user-info-test', text: 'user json dump' },
   { href: '/playlist-tagging-test', text: 'tagging test' },
+  { href: '/logout', text: 'Log Out' },
 ];
 
 const url = new URL(Astro.request.url);
 
 const sdkProps = (Astro.locals as Locals).sdkProps;
+
+const expires_in = Astro.cookies.get("expires_in")?.value;
+const timeLeft = expires_in ? Math.max(parseInt(expires_in) - (new Date()).getTime() - 3 * 60 * 1000, 0): 0;
 ---
 <BaseLayout title={title}>
   <div class="p-2 bg-zinc-950 h-full flex flex-row gap-2">
@@ -36,4 +41,10 @@ const sdkProps = (Astro.locals as Locals).sdkProps;
     </aside>
     <slot />
   </div>
+  <script define:vars={{timeLeft}}>
+    console.log("Will reauth in", (timeLeft / 1000 / 60).toFixed(2), "minutes")
+    setTimeout(() => {
+      window.location.reload();
+    }, timeLeft);
+  </script>
 </BaseLayout>
