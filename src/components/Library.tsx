@@ -25,9 +25,13 @@ export default function Library({sdkProps}: {sdkProps: SdkProps}) {
   const pills = ["Playlists", "Tags"]
 
   useEffect(() => {
-    const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
-    setSdk(_sdk)
-    _sdk.currentUser.playlists.playlists().then(playlist => setPlaylists(playlist.items))
+    try {
+      const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
+      setSdk(_sdk)
+      _sdk.currentUser.playlists.playlists().then(playlist => setPlaylists(playlist.items))
+    } catch(e) {
+      document.location.href = "/?error=token_error"
+    }
   }, [])
 
   return <div className="flex flex-col h-full">

@@ -1,0 +1,11 @@
+---
+import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import UserLayout from "../layouts/UserLayout.astro";
+import type { Locals } from "../middleware";
+import CurrPlay from "../components/CurrentlyPlaying";
+
+const sdkProps = (Astro.locals as Locals).sdkProps;
+---
+<UserLayout title="Currently Playing">
+  <CurrPlay sdkProps={sdkProps} client:load/>
+</UserLayout>
