@@ -22,6 +22,22 @@ export function getTagList(): Tag[] {
   return [];
 }
 
+const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
+export function createTagPlaceholders(count: number): Tag[] {
+  const tagList: Tag[] = [];
+
+  for (let i = 0; i < count; i++) {
+    tagList.push({
+      id: (Date.now() - Math.random() * 10000).toString(),
+      name: "placeholder",
+      color: randomHex(),
+    });
+  }
+
+  return tagList;
+}
+
 // create a new tag given a name and color
 export function createNewTag({ name, color }: BaseTag) {
   const tagList = getTagList();

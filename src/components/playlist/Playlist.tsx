@@ -1,6 +1,6 @@
 import { SpotifyApi, type SimplifiedPlaylist, type PlaylistedTrack, type Page, type Track } from "@spotify/web-api-ts-sdk"
 import { useEffect, useState,  } from "react"
-import type { SdkProps } from "../middleware"
+import type { SdkProps } from "../../middleware"
 import { FastAverageColor } from 'fast-average-color';
 
 function msToTime(duration: number) {

@@ -1,6 +1,6 @@
 import { SpotifyApi, type SimplifiedPlaylist, type Track } from "@spotify/web-api-ts-sdk"
 import { useEffect, useState } from "react"
-import type { SdkProps } from "../middleware"
+import type { SdkProps } from "../../middleware"
 import { FastAverageColor } from 'fast-average-color';
 
 export default function CurrentlyPlaying({sdkProps}: {sdkProps: SdkProps}) {

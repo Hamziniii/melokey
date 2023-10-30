@@ -1,7 +1,7 @@
 ---
 import UserLayout from "../../layouts/UserLayout.astro";
 import type { Locals } from "../../middleware";
-import Playlist from "../../components/Playlist"
+import Playlist from "../../components/playlist/Playlist"
 
 const { playlistId } = Astro.params;
 const sdkProps = (Astro.locals as Locals).sdkProps;

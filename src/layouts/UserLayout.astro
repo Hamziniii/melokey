@@ -1,6 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro'
-import Library from '../components/Library'
+import Library from '../components/library/Library'
 import type { Locals } from '../middleware';
 
 interface Props {
@@ -19,6 +19,7 @@ const navLinks = [
 const url = new URL(Astro.request.url);
 
 const sdkProps = (Astro.locals as Locals).sdkProps;
+const playlistCount = parseInt(Astro.cookies.get("playlistCount")?.value ?? "") || 0;
 
 const expires_in = Astro.cookies.get("expires_in")?.value;
 const timeLeft = expires_in ? Math.max(parseInt(expires_in) - (new Date()).getTime() - 3 * 60 * 1000, 0): 0;
@@ -36,8 +37,7 @@ const timeLeft = expires_in ? Math.max(parseInt(expires_in) - (new Date()).getTi
         </ul>
       </nav>
       <div class="p-4 flex-grow overflow-y-hidden bg-zinc-900 rounded-lg">
-        <Library sdkProps={sdkProps}/>
-        <Library sdkProps={sdkProps} SSR={false} client:load/>
+        <Library sdkProps={sdkProps} playlistCount={playlistCount} client:load/>
       </div>
     </aside>
     <slot />
