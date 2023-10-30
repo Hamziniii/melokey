@@ -1,6 +1,7 @@
 ---
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 import UserLayout from "../layouts/UserLayout.astro";
+import TagsView from "../components/TagsView";
 import type { Locals } from "../middleware";
 
 const time = new Date().getHours();
@@ -11,7 +12,6 @@ const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
 
 const user = await sdk.currentUser.profile()
 const name = user.display_name
-const tags = ["tag1", "tag2", "tag3"]
 const playlists = (await sdk.currentUser.playlists.playlists(10)).items
 ---
 <UserLayout title="Home">
@@ -19,22 +19,14 @@ const playlists = (await sdk.currentUser.playlists.playlists(10)).items
     <h1 class="text-3xl mt-4 font-bold text-white">Good {greeting}, {name}! </h1>
     <h2 class="text-2xl mt-4 font-bold text-white">Your Tags</h2>
     <div class="flex flex-row flex-wrap">
-      {tags.map(tag => (
-        <div class="my-4 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a]">
-          <div class="bg-zinc-800 rounded-lg h-36 w-36 mb-4 text-gray-500 text-4xl">
-            no image
-          </div>
-          <p class="text-white">{tag}</p>
-          <p class="text-gray-400 font-thin">Tag</p>
-        </div>
-      ))}
+      <TagsView client:only/>
     </div>
     <h2 class="text-2xl mt-4 mb-4 font-bold text-white">Your Playlists</h2>
     <div class="flex flex-row flex-wrap">
       {playlists.map(playlist => {
         const image = playlist.images[0]?.url
 
-        return (<div playlist-id={playlist.id} class="my-2 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a]">
+        return (<div playlist-id={playlist.id} class="my-2 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a] cursor-pointer">
             {
               image ? (
                 <div class="bg-zinc-800 rounded-lg h-36 w-36 mb-4">
