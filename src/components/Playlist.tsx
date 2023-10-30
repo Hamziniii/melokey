@@ -52,7 +52,6 @@ export default function Playlist({sdkProps, playlistId}: {sdkProps: SdkProps, pl
   useEffect(() => {
     const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
     setSdk(_sdk)
-    console.log(sdkProps)
     _sdk.playlists.getPlaylist(playlistId).then(playlist => setPlaylist(playlist))
     _sdk.playlists.getPlaylistCoverImage(playlistId).then(image => setImage(image[0]?.url))
     _sdk.playlists.getPlaylistItems(playlistId).then(tracks => [setTrackPage(tracks), setTracks(tracks.items)])
