@@ -80,7 +80,7 @@ export default function Playlist({sdkProps, playlistId}: {sdkProps: SdkProps, pl
             tracks.length != trackPage?.total ?
             <>
               <p className="text-sm font-thin pl-[.4em] mr-2">{tracks.length} / {trackPage?.total} Songs Loaded</p>
-              <button onClick={getNextPage} className="mr-auto underline text-sm font-thin text-gray-400 transition-colors duration-150 ease-in-out hover:text-white">Load More</button>
+              <button onClick={getNextPage} className="mr-auto underline text-sm font-thin text-gray-300 transition-colors duration-150 ease-in-out hover:text-white">Load More</button>
             </> :
             <p className="text-sm font-thin pl-[.4em] mr-2">{tracks.length} Songs</p>
           }
