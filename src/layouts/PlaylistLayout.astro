@@ -1,6 +1,7 @@
 ---
 import type { Page, Playlist } from "@spotify/web-api-ts-sdk";
 import Layout from "./Layout.astro";
+import NewTagButton from "../components/NewTagButton.astro";
 interface Props {
   title: string;
 }
@@ -34,6 +35,12 @@ const playlists: Page<Playlist> = await result.json();
         <pre>User Data: {JSON.stringify(playlists, null, 2)}</pre>
       </details>
 
+      <p><NewTagButton /></p>
+
+      <small>tags</small>
+      <div id="tags-list"></div>
+
+      <small>playlists</small>
       {
         playlists.items.map((playlist) => (
           <li>
@@ -53,4 +60,26 @@ const playlists: Page<Playlist> = await result.json();
     display: flex;
     flex-direction: row;
   }
+  #playlist-nav {
+    background-color: #000;
+    margin-right: 1rem;
+  }
+  #tags-list {
+    display: flex;
+    flex-direction: column;
+  }
 </style>
+
+<script>
+  import { getTagList } from "../common-client/tagManagement";
+
+  const tagsListWrapper = document.getElementById("tags-list")!;
+  const tags = getTagList();
+
+  tags.forEach((tag) => {
+    const tagEl = document.createElement("a") as HTMLAnchorElement;
+    tagEl.href = "/tag/" + tag.id;
+    tagEl.innerHTML = tag.name;
+    tagsListWrapper.appendChild(tagEl);
+  });
+</script>

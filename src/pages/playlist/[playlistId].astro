@@ -1,6 +1,7 @@
 ---
-import type { Page, Playlist } from "@spotify/web-api-ts-sdk";
+import type { Playlist, Episode, Track } from "@spotify/web-api-ts-sdk";
 import PlaylistLayout from "../../layouts/PlaylistLayout.astro";
+import TrackTagger from "../../TrackTagger/TrackTagger.tsx";
 
 const { playlistId } = Astro.params;
 
@@ -24,23 +25,6 @@ if (!result.ok) {
 const playlist: Playlist = await result.json();
 ---
 
-<PlaylistLayout title="Playlist Tagging Test">
-  <h1>{playlist.name}</h1>
-
-  <details>
-    <summary>json dump</summary>
-    <pre>User Data: {JSON.stringify(playlist, null, 2)}</pre>
-  </details>
-
-  {
-    playlist.tracks.items.map((playlistedTrack) => (
-      <p>
-        {playlistedTrack.track.name} : {playlistedTrack.track.uri}
-      </p>
-    ))
-  }
+<PlaylistLayout title="dashboard">
+  <TrackTagger client:only="react" playlist={playlist} />
 </PlaylistLayout>
-
-<script lang="ts">
-console.log("wowie zowie");
-</script>
