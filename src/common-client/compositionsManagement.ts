@@ -12,10 +12,10 @@ export type Composition = CompositionBase & {
 };
 
 export function getCompositionList(): Composition[] {
-  const tagList = localStorage.getItem("tagList");
+  const compositionList = localStorage.getItem("compositionList");
 
-  if (tagList) {
-    return JSON.parse(tagList);
+  if (compositionList) {
+    return JSON.parse(compositionList);
   }
 
   return [];
