@@ -92,7 +92,7 @@ const playlists: Page<Playlist> = await result.json();
 
   compositions.forEach((tag) => {
     const tagEl = document.createElement("a") as HTMLAnchorElement;
-    tagEl.href = "/composition/" + tag.id;
+    tagEl.href = "/composition-test/" + tag.id;
     tagEl.innerHTML = tag.name;
     compositionsListWrapper.appendChild(tagEl);
   });
