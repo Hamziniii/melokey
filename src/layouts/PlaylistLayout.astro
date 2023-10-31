@@ -37,6 +37,9 @@ const playlists: Page<Playlist> = await result.json();
 
       <p><NewTagButton /></p>
 
+      <small>compositions</small>
+      <div id="compositions-list"></div>
+
       <small>tags</small>
       <div id="tags-list"></div>
 
@@ -71,6 +74,7 @@ const playlists: Page<Playlist> = await result.json();
 </style>
 
 <script>
+  import { getCompositionList } from "../common-client/compositionsManagement";
   import { getTagList } from "../common-client/tagManagement";
 
   const tagsListWrapper = document.getElementById("tags-list")!;
@@ -81,5 +85,15 @@ const playlists: Page<Playlist> = await result.json();
     tagEl.href = "/tag/" + tag.id;
     tagEl.innerHTML = tag.name;
     tagsListWrapper.appendChild(tagEl);
+  });
+
+  const compositionsListWrapper = document.getElementById("compositions-list")!;
+  const compositions = getCompositionList();
+
+  compositions.forEach((tag) => {
+    const tagEl = document.createElement("a") as HTMLAnchorElement;
+    tagEl.href = "/composition-test/" + tag.id;
+    tagEl.innerHTML = tag.name;
+    compositionsListWrapper.appendChild(tagEl);
   });
 </script>

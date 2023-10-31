@@ -1,0 +1,18 @@
+<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog#handling_the_return_value_from_the_dialog -->
+<button id="debug-button" class="px-4 py-2 bg-purple-500">flip a coin</button>
+
+<script>
+  import { getTracksThatShareTags } from "../common-client/compositionsManagement";
+
+  function debugStuff() {
+    const result = getTracksThatShareTags(["1698742725115", "1698742728322"]);
+    console.log("!!! GET TRACKS FROM TAGS RESULT", result);
+  }
+
+  const showDialogButton = document.getElementById("debug-button")! as HTMLButtonElement;
+
+  // "Show the dialog" button opens the <dialog> modally
+  showDialogButton.addEventListener("click", () => {
+    debugStuff();
+  });
+</script>

@@ -1,0 +1,62 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PlaylistLayout from "../layouts/PlaylistLayout.astro";
+
+const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
+if (!spotifyAccessToken) {
+  return Astro.redirect("/?error=token_missing");
+}
+
+const result = await fetch("https://api.spotify.com/v1/me", {
+  method: "GET",
+  headers: { Authorization: `Bearer ${spotifyAccessToken.value}` },
+});
+
+// TODO implement better error handling with feedback
+if (!result.ok) {
+  return Astro.redirect("/?error=not_authorized");
+}
+
+const userData = await result.json();
+---
+
+<PlaylistLayout title="User Info Test">
+  <h1>compositions</h1>
+  <input class="block bg-gray-800" type="text" id="composition-name" placeholder="composition name" value="green and yellow test" />
+  <input class="block bg-gray-800" type="text" id="composition-description" placeholder="composition description" value="really cool description" />
+  <input class="block bg-gray-800" type="text" id="composition-taglist" placeholder="comma seperated list of tag ids" value="1698738177677,1698738694165" />
+  <button id="create-composition-button" class="bg-green-500 p-2">create composition</button>
+
+  <details>
+    <summary>json dump</summary>
+    <pre id="composition-dump"></pre>
+  </details>
+</PlaylistLayout>
+
+<script>
+  import { createComposition, getCompositionList } from "../common-client/compositionsManagement";
+
+  const compositionList = getCompositionList();
+  const compositionDumpEl = document.getElementById("composition-dump") as HTMLPreElement;
+  const createCompositionButton = document.getElementById("create-composition-button") as HTMLButtonElement;
+
+  compositionDumpEl.innerHTML += JSON.stringify(compositionList, null, 2);
+
+  createCompositionButton.addEventListener("click", () => {
+    const compositionName = (document.getElementById("composition-name") as HTMLInputElement).value;
+    const compositionDescription = (document.getElementById("composition-description") as HTMLInputElement).value;
+    const compositionTaglist = (document.getElementById("composition-taglist") as HTMLInputElement).value;
+
+    const taglist = compositionTaglist.split(",").map((tagId) => tagId.trim());
+
+    const composition = {
+      name: compositionName,
+      description: compositionDescription,
+      tags: taglist,
+    };
+
+    createComposition(composition);
+
+    console.log("!!! CREATING NEW COMPOSITION", composition);
+  });
+</script>
