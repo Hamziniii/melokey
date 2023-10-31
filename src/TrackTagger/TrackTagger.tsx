@@ -1,10 +1,14 @@
 import type { Playlist, Track } from "@spotify/web-api-ts-sdk";
-import React from "react";
+import React, { useRef } from "react";
+import TaggerModal from "./TaggerModal";
 interface AppProps {
   playlist: Playlist;
 }
 
 const TrackTagger: React.FC<AppProps> = ({ playlist }) => {
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [track, setTrack] = React.useState<Track | null>(null);
+
   return (
     <>
       <h1>{playlist.name}</h1>
@@ -12,6 +16,8 @@ const TrackTagger: React.FC<AppProps> = ({ playlist }) => {
         <summary>json dump</summary>
         <pre>{JSON.stringify(playlist, null, 2)}</pre>
       </details>
+
+      {track && <TaggerModal track={track} isOpen={isModalOpen} />}
 
       <div className="bg-gray-900 flex flex-col gap-3 py-3">
         {playlist.tracks.items.map((playlistedTrack) => {
@@ -29,7 +35,15 @@ const TrackTagger: React.FC<AppProps> = ({ playlist }) => {
               <a href={trackUrl} target="_blank">
                 {track.name}
               </a>
-              <button className="bg-orange-800 p-2">add tag</button>
+              <button
+                className="bg-orange-800 p-2"
+                onClick={() => {
+                  setTrack(track);
+                  setModalOpen(true);
+                }}
+              >
+                add tag
+              </button>
             </div>
           );
         })}
