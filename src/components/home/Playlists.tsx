@@ -3,14 +3,18 @@ import { useEffect, useState } from "react"
 import type { SdkProps } from "../../middleware";
 import Cookies from "js-cookie";
 
-type PartialPlaylist = Pick<SimplifiedPlaylist, "id" | "name" | "description" | "images">
+type PartialPlaylist = Pick<SimplifiedPlaylist, "id" | "name" | "description" | "images" | "tracks">
 
 function createPlaylistPlaceholders(count: number): PartialPlaylist[] {
   return Array.from(Array(count).keys()).map(i => ({
     id: i.toString(),
     name: "Playlist",
     description: "Description",
-    images: []
+    images: [],
+    tracks: {
+      total: 0,
+      href: "",
+    }
   }))
 }
 
@@ -45,7 +49,7 @@ export default function Playlists({sdkProps, playlistCount = 4}: {sdkProps: SdkP
           )
         }
         <p className="text-white overflow-hidden whitespace-nowrap text-ellipsis w-36">{playlist.name}</p>
-        <p className="text-gray-400 font-thin">Playlist</p>
+        <p className="text-gray-400 font-thin">{playlist.tracks?.total} Songs</p>
       </div>
     )})
 }

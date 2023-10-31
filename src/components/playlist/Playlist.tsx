@@ -29,6 +29,21 @@ table::before {
 }
 `
 
+export function TrackRowItem({track}: {track: Track}) {
+  return <tr key={track.id}>
+    <td id={track.id} className="flex flex-row mb-2 pr-4 gap-4">
+      <img src={track?.album?.images[0]?.url} className="w-12 h-12 rounded-md" />
+      <div className="flex flex-col">
+        <p className="">{track.name || "N/A"}</p>
+        <p className="font-thin text-sm text-gray-400">{track?.artists?.map(artist => artist.name).join(", ") || "N/A"}</p>
+      </div>
+    </td>
+    <td className="text-sm font-thin text-gray-400">{track.album.name || "N/A"}</td>
+    {/* <td className="text-sm font-thin text-gray-400">{new Date(t.added_at).toDateString()}</td> */}
+    <td className="text-sm font-thin text-gray-400">{msToTime(track.duration_ms)}</td>
+  </tr>
+}
+
 export default function Playlist({sdkProps, playlistId}: {sdkProps: SdkProps, playlistId: string}) {
   const [sdk, setSdk] = useState<SpotifyApi | null>(null)
   const [playlist, setPlaylist] = useState<SimplifiedPlaylist | null>(null)
@@ -78,14 +93,14 @@ export default function Playlist({sdkProps, playlistId}: {sdkProps: SdkProps, pl
           {
             tracks.length != trackPage?.total ?
             <>
-              <p className="text-sm font-thin pl-[.4em] mr-2">{tracks.length} / {trackPage?.total} Songs Loaded</p>
+              <p className="text-sm font-thin pl-[.2em] mr-2">{tracks.length} / {trackPage?.total} Songs Loaded</p>
               <button onClick={getNextPage} className="mr-auto underline text-sm font-thin text-gray-300 transition-colors duration-150 ease-in-out hover:text-white">Load More</button>
             </> :
-            <p className="text-sm font-thin pl-[.4em] mr-2">{tracks.length} Songs</p>
+            <p className="text-sm font-thin pl-[.2em] mr-2">{tracks.length} Songs</p>
           }
         </div>
         <h2 className="text-5xl pt-1 text-white">{playlist?.name}</h2>
-        <p className="text-sm pl-1 font-thin text-gray-200">{playlist?.public ? "Public" : "Private"} Playlist</p>
+        <p className="text-sm pl-[.1em] font-thin text-gray-200">{playlist?.public ? "Public" : "Private"} Playlist</p>
       </div>
     </div>
     <div className="w-full h-full bg-[#0000001d] overflow-y-auto px-4 pb-4 rounded-lg relative">
@@ -101,18 +116,7 @@ export default function Playlist({sdkProps, playlistId}: {sdkProps: SdkProps, pl
         <tbody>
           {tracks.map((t, index, arr) => {
             const track = t.track as any as Track
-            return <tr key={track.id}>
-              <td id={track.id} className="flex flex-row mb-2 pr-4 gap-4">
-                <img src={track?.album?.images[0]?.url} className="w-12 h-12 rounded-md" />
-                <div className="flex flex-col">
-                  <p className="">{track.name || "N/A"}</p>
-                  <p className="font-thin text-sm text-gray-400">{track?.artists?.map(artist => artist.name).join(", ") || "N/A"}</p>
-                </div>
-              </td>
-              <td className="text-sm font-thin text-gray-400">{track.album.name || "N/A"}</td>
-              {/* <td className="text-sm font-thin text-gray-400">{new Date(t.added_at).toDateString()}</td> */}
-              <td className="text-sm font-thin text-gray-400">{msToTime(track.duration_ms)}</td>
-            </tr>
+            return <TrackRowItem key={"" + track.id + index} track={track} />
           })}
         </tbody>
       </table>
