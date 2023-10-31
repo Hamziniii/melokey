@@ -37,14 +37,14 @@ export function getTagListWithData(): TagWithTracks[] {
 
 export const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
-export function createTagPlaceholders(count: number): Tag[] {
+export function createTagPlaceholders(count: number, colorful = false): Tag[] {
   const tagList: Tag[] = [];
 
   for (let i = 0; i < count; i++) {
     tagList.push({
       id: (Date.now() - Math.floor(Math.random() * 10000)).toString(),
       name: "placeholder",
-      color: randomHex(),
+      color: colorful ? randomHex() : "#1b1647",
     });
   }
 
