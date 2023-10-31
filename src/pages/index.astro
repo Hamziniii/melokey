@@ -46,7 +46,7 @@ params.append("client_id", SPOTIFY_CLIENT_ID);
 params.append("response_type", "code");
 // redirect to current host + /callback
 params.append("redirect_uri", Astro.url.origin + "/api/spotify/callback");
-params.append("scope", "user-read-private user-read-email user-read-currently-playing");
+params.append("scope", "user-read-private user-read-email user-read-currently-playing user-read-playback-state");
 params.append("code_challenge_method", "S256");
 params.append("code_challenge", challenge);
 

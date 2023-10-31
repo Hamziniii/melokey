@@ -1,3 +1,5 @@
+import type { Track } from "@spotify/web-api-ts-sdk";
+
 export type BaseTag = {
   name: string;
   color: string;
@@ -6,6 +8,8 @@ export type BaseTag = {
 export type Tag = BaseTag & {
   id: string;
 };
+
+export type TagWithTracks = (Tag & {tracks: Track[]})
 
 // return a list of all tags
 export function getTagList(): Tag[] {
@@ -22,14 +26,23 @@ export function getTagList(): Tag[] {
   return [];
 }
 
-const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+export function getTagListWithData(): TagWithTracks[] {
+  const tagList = getTagList();
+
+  return tagList.map((tag) => ({
+    ...tag,
+    tracks: JSON.parse(localStorage.getItem("tag-" + tag.id) ?? "[]"),
+  }));
+}
+
+export const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
 export function createTagPlaceholders(count: number): Tag[] {
   const tagList: Tag[] = [];
 
   for (let i = 0; i < count; i++) {
     tagList.push({
-      id: (Date.now() - Math.random() * 10000).toString(),
+      id: (Date.now() - Math.floor(Math.random() * 10000)).toString(),
       name: "placeholder",
       color: randomHex(),
     });

@@ -2,6 +2,7 @@ import { SpotifyApi, type SimplifiedPlaylist, type Track } from "@spotify/web-ap
 import { useEffect, useState } from "react"
 import type { SdkProps } from "../../middleware"
 import { FastAverageColor } from 'fast-average-color';
+import { queueAtom, trackAtom } from "./store";
 
 export default function CurrentlyPlaying({sdkProps}: {sdkProps: SdkProps}) {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<Track | null>(null)
@@ -13,9 +14,14 @@ export default function CurrentlyPlaying({sdkProps}: {sdkProps: SdkProps}) {
       const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
       const fac = new FastAverageColor()
       const run = () => {
-        sdk?.player.getCurrentlyPlayingTrack().then(track => {
-          setCurrentlyPlaying(track?.item as Track)
-          let img = (track?.item as Track)?.album?.images[0]?.url
+        if(document.hidden) return
+
+        sdk?.player.getUsersQueue().then(track => {
+          let currPlay = track?.currently_playing as Track
+          setCurrentlyPlaying(currPlay)
+          trackAtom.set(currPlay)
+          queueAtom.set(track?.queue as Track[] ?? [])
+          let img = (currPlay)?.album?.images[0]?.url
           setImage(img)
 
           fac.getColorAsync(img)
@@ -26,7 +32,7 @@ export default function CurrentlyPlaying({sdkProps}: {sdkProps: SdkProps}) {
         })
       }
       run()
-      setCInterval(setInterval(run, 1000))
+      setCInterval(setInterval(run, 3000))
     } catch(e) {
       console.error(e)
     }
@@ -42,7 +48,7 @@ export default function CurrentlyPlaying({sdkProps}: {sdkProps: SdkProps}) {
         }
 
         <h2 className="pt-4">{currentlyPlaying?.name ?? "N/A"}</h2>
-        <h3 className="font-thin">{currentlyPlaying?.artists.map(artist => artist.name).join(", ") ?? "N/A"}</h3>
+        <h3 className="font-thin w-96">{currentlyPlaying?.artists.map(artist => artist.name).join(", ") ?? "N/A"}</h3>
       </div>
     </div>
   )

@@ -3,9 +3,15 @@ import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 import UserLayout from "../layouts/UserLayout.astro";
 import type { Locals } from "../middleware";
 import CurrPlay from "../components/currently-playing/CurrentlyPlaying";
+import Queue from "../components/currently-playing/Queue";
+import TagPane from "../components/currently-playing/TagPane";
 
 const sdkProps = (Astro.locals as Locals).sdkProps;
 ---
 <UserLayout title="Currently Playing">
   <CurrPlay sdkProps={sdkProps} client:load/>
+  <div class="flex flex-col gap-2 w-64 flex-shrink-0">
+    <TagPane client:load/>
+    <Queue client:load/>
+  </div>
 </UserLayout>
