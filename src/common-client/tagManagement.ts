@@ -9,7 +9,7 @@ export type Tag = BaseTag & {
   id: string;
 };
 
-export type TagWithTracks = (Tag & {tracks: Track[]})
+export type TagWithTracks = Tag & { tracks: Track["id"] };
 
 // return a list of all tags
 export function getTagList(): Tag[] {
@@ -35,7 +35,7 @@ export function getTagListWithData(): TagWithTracks[] {
   }));
 }
 
-export const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+export const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
 
 export function createTagPlaceholders(count: number): Tag[] {
   const tagList: Tag[] = [];
