@@ -1,0 +1,33 @@
+---
+import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import UserLayout from "../layouts/UserLayout.astro";
+import Tags, { NewTag } from "../components/home/Tags";
+import type { Locals } from "../middleware";
+import Playlists from "../components/home/Playlists";
+
+const time = new Date().getHours();
+const greeting = time < 12 ? "Morning" : time < 18 ? "Afternoon" : "Evening";
+const sdkProps = (Astro.locals as Locals).sdkProps;
+const tagCount = parseInt(Astro.cookies.get("tagCount")?.value ?? "") || 0;
+const playlistCount = parseInt(Astro.cookies.get("playlistCount")?.value ?? "") || 0;
+
+const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
+
+const user = await sdk.currentUser.profile()
+const name = user.display_name
+// const playlists: SimplifiedPlaylist[] = (await sdk.currentUser.playlists.playlists(10)).items
+---
+<UserLayout title="Home">
+  <div class="p-4 w-full h-full flex-grow transition-all ease-in-out bg-gradient-to-b from-slate-900 rounded-lg overflow-y-auto">
+    <h1 class="text-3xl mt-4 font-bold text-white">Good {greeting}, {name}! </h1>
+    <h2 class="text-2xl mt-4 font-bold text-white">Your Tags</h2>
+    <div class="flex flex-row flex-wrap">
+      <NewTag client:load/>
+      <Tags client:load tagCount={tagCount}/>
+    </div>
+    <h2 class="text-2xl mt-4 mb-4 font-bold text-white">Your Playlists</h2>
+    <div class="flex flex-row flex-wrap">
+      <Playlists client:load playlistCount={playlistCount} sdkProps={sdkProps}/>
+    </div>
+  </div>
+</UserLayout>

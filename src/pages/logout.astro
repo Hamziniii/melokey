@@ -1,0 +1,6 @@
+---
+Astro.cookies.delete('spotify_access_token')
+Astro.cookies.delete('spotify_refresh_token')
+return Astro.redirect('/?logout=1')
+---
+<p>Logging out...</p>
