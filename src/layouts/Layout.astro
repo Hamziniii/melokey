@@ -1,16 +1,17 @@
 ---
-import BaseLayout from './BaseLayout.astro'
+import BaseLayout from "./BaseLayout.astro";
 interface Props {
   title: string;
 }
 
 const { title } = Astro.props;
 ---
+
 <BaseLayout title={title}>
   <nav class="mb-4">
     <a class="bg-indigo-500 text-white no-underline px-4 py-2 mr-4" href="/">home</a>
     <a class="bg-indigo-500 text-white no-underline px-4 py-2 mr-4" href="/user-info-test">user json dump</a>
-    <a class="bg-indigo-500 text-white no-underline px-4 py-2 mr-4" href="/playlist-tagging-test">tagging test</a>
+    <a class="bg-indigo-500 text-white no-underline px-4 py-2 mr-4" href="/composition-lister">compositions</a>
   </nav>
   <slot />
 </BaseLayout>
