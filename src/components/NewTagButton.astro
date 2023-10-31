@@ -18,7 +18,8 @@
 </dialog>
 
 <script>
-  import { getTagByName, createNewTag } from "../common-client/tagManagement";
+  import { getTagByName, createNewTag, randomHex } from "../common-client/tagManagement";
+  
 
   const showDialogButton = document.getElementById("show-tag-dialog-button")! as HTMLButtonElement;
   const newTagDialog = document.getElementById("new-tag-dialog")! as HTMLDialogElement;
@@ -43,7 +44,7 @@
     }
 
     // TODO add a color picker so people can pick a color for their tag
-    createNewTag({ name: newTagDialog.returnValue, color: "#ff3e3e" });
+    createNewTag({ name: newTagDialog.returnValue, color: randomHex() });
   });
 
   // https://stackoverflow.com/a/3261380
