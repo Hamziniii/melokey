@@ -42,29 +42,26 @@ export function createComposition({ name, description, tags }: CompositionBase) 
   localStorage.setItem("compositionList", JSON.stringify(compositionList));
 }
 
-// very inefficient but will work for a demo
+// O(n * m) where n is the number of tags and m is the number of tracks (worst case
 export function getTracksThatShareTags(tags: Array<Tag["id"]>): Array<Track["id"]> {
-  const tagListWithData = getTagListWithData();
-  console.log("!!! TAG LIST WITH DATA", tagListWithData);
-
-  const allTracksDump: string[] = tagListWithData.reduce((acc: string[], tag) => {
-    return [...acc, ...tag.tracks];
-  }, []);
-
-  // remove duplicates
-  const allTracks = [...new Set(allTracksDump)];
-  console.log("!!! ALL TRACKS", allTracks);
-
-  // filter tracks that have all tags
-  const tracksThatShareTags = allTracks.filter((trackId: Track["id"]) => {
-    const trackTags = tagListWithData.filter((tag) => tag.tracks.includes(trackId));
-
-    const trackHasAllTags = tags.every((tagId) => trackTags.some((tag) => tag.id === tagId));
-
-    return trackHasAllTags;
+  const tagListWithData = getTagListWithData(); // O(n) where n is the number of tags
+  const trackOccurences = new Map<Track["id"], number>();
+  tagListWithData.forEach((tag) => { // For each tag (O(n) where n is the number of tags)
+    if (tags.some((tagId) => tag.id === tagId)) { // If the tag is in the list of tags we're looking for
+      tag.tracks.forEach((track) => { // For each track in the tag (O(m) where m is the number of tracks
+        // Increment the number of occurences of the track O(1)
+        trackOccurences.set(track, (trackOccurences.get(track) ?? 0) + 1);
+      });
+    }
   });
 
-  return tracksThatShareTags;
+  // O(m) where m is the number of tracks
+  const tracks = Array.from(trackOccurences.entries()) // 
+    // Remove filter if we want to do OR set operation instead of AND set operation 
+    .filter(([, occurences]) => occurences === tags.length)
+    .map(([track]) => track);
+
+  return tracks
 }
 
 export function updateComposition(id: string, composition: CompositionBase) {

@@ -63,13 +63,14 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
     }
 
     const trackList = getTracksThatShareTags(composition.tags);
-
     const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
     setSdk(_sdk);
-    _sdk.tracks.get(trackList).then((tracks) => {
-      setTracks(tracks);
-      setIsPageReady(true);
-    });
+
+    if(trackList.length > 0)
+      _sdk.tracks.get(trackList).then((tracks) => {
+        setTracks(tracks);
+        setIsPageReady(true);
+      });
   }, []);
 
   if (!isPageReady) {

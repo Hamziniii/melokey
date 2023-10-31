@@ -12,6 +12,7 @@ export type Tag = BaseTag & {
 export type TagWithTracks = Tag & { tracks: Track["id"][] };
 
 // return a list of all tags
+// O(1)
 export function getTagList(): Tag[] {
   // check localstorage for tag list
   // if not found, return empty array
@@ -26,6 +27,7 @@ export function getTagList(): Tag[] {
   return [];
 }
 
+// O(n) where n is the number of tags (worst case
 export function getTagListWithData(): TagWithTracks[] {
   const tagList = getTagList();
 
