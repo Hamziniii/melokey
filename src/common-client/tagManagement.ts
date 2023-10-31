@@ -9,7 +9,7 @@ export type Tag = BaseTag & {
   id: string;
 };
 
-export type TagWithTracks = Tag & { tracks: Track["id"] };
+export type TagWithTracks = Tag & { tracks: Track["id"][] };
 
 // return a list of all tags
 export function getTagList(): Tag[] {
