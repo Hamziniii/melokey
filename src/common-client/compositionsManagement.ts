@@ -84,13 +84,13 @@ export function updateComposition(id: string, composition: CompositionBase) {
   localStorage.setItem("compositionList", JSON.stringify(compositionList));
 }
 
-function getCompositionById(id: string): Composition | undefined {
+export function getCompositionById(id: string): Composition | undefined {
   const compositionList = getCompositionList();
 
   return compositionList.find((composition) => composition.id === id);
 }
 
-function getCompositionByName(name: string): Composition | undefined {
+export function getCompositionByName(name: string): Composition | undefined {
   const compositionList = getCompositionList();
 
   return compositionList.find((composition) => composition.name === name);
