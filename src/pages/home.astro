@@ -4,6 +4,7 @@ import UserLayout from "../layouts/UserLayout.astro";
 import Tags, { NewTag } from "../components/home/Tags";
 import type { Locals } from "../middleware";
 import Playlists from "../components/home/Playlists";
+import Compositions, { NewComposition } from "../components/home/Composition";
 
 const time = new Date().getHours();
 const greeting = time < 12 ? "Morning" : time < 18 ? "Afternoon" : "Evening";
@@ -27,6 +28,8 @@ const name = user.display_name
     </div>
     <h2 class="text-2xl mt-4 font-bold text-white">Your Compositions</h2>
     <div class="flex flex-row flex-wrap">
+      <NewComposition client:load/>
+      <Compositions client:load/>
     </div>
     <h2 class="text-2xl mt-4 mb-4 font-bold text-white">Your Playlists</h2>
     <div class="flex flex-row flex-wrap">

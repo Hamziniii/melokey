@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import type { SdkProps } from "../../middleware"
 import Cookies from "js-cookie"
 import { getTagListWithData, type Tag, type TagWithTracks } from "../../common-client/tagManagement"
+import { getCompositionList, type Composition } from "../../common-client/compositionsManagement"
 
 type PartialPlaylist = Pick<SimplifiedPlaylist, "id" | "name" | "images" | "tracks">
 function createPlaylistPlaceholders(count: number): PartialPlaylist[] {
@@ -48,11 +49,22 @@ function TagTile({tag}: {tag: TagWithTracks}) {
   </div>
 }
 
+function CompositionTile({composition}: {composition: Composition}) {
+  return <div className="flex flex-row w-full gap-2 h-12 cursor-pointer" onClick={() => { if(composition) window.location.href = "/composition-test/" + composition.id}}>
+    <div className="w-12 h-12 rounded-md flex-shrink-0 text-gray-500 bg-gradient-to-b from-slate-600"/>
+    <div className="flex flex-col w-full overflow-hidden">
+      <h2 className="text-base w-full overflow-hidden whitespace-nowrap text-ellipsis text-gray-400 transition-colors duration-150 ease-in-out hover:text-white">{composition?.name ?? "No name"}</h2>
+      {/* <h3 className="text-sm font-thin text-gray-300">{composition?.tracks?.length ?? 0} Songs</h3> */}
+    </div>
+  </div>
+}
+
 export default function Library({sdkProps, playlistCount = 4}: {sdkProps: SdkProps, playlistCount?: number}) {
   const [playlists, setPlaylists] = useState<PartialPlaylist[]>(createPlaylistPlaceholders(playlistCount || 4))
   const [tags, setTags] = useState<TagWithTracks[]>([])
-  const [active, setActive] = useState<"Playlists" | "Tags">("Playlists")
-  const pills: ["Playlists", "Tags"] = ["Playlists", "Tags"]
+  const [compositions, setCompositions] = useState<Composition[]>([])
+  const [active, setActive] = useState<"Playlists" | "Tags" | "Compositions">("Playlists")
+  const pills: ["Playlists", "Tags", "Compositions"] = ["Playlists", "Tags", "Compositions"]
 
   useEffect(() => {
     localStorage.getItem("sideNavPlaylists") && setPlaylists(JSON.parse(localStorage.getItem("sideNavPlaylists")!))
@@ -65,6 +77,7 @@ export default function Library({sdkProps, playlistCount = 4}: {sdkProps: SdkPro
         Cookies.set("playlistCount", playlist.items.length.toString())
       })
       setTags(getTagListWithData())
+      setCompositions(getCompositionList())
     } catch(e) {
       document.location.href = "/?error=token_error"
     }
@@ -78,13 +91,19 @@ export default function Library({sdkProps, playlistCount = 4}: {sdkProps: SdkPro
       )}
     </div>
     <ul className="mt-4 flex-grow overflow-y-auto">
-      {active === "Playlists" ? playlists.map((playlist: PartialPlaylist) => (
+      {active === "Playlists" && playlists.map((playlist: PartialPlaylist) => (
         <li key={playlist.id} className="mb-3">
           <PlaylistTile playlist={playlist} />
         </li>
-      )) : tags.map((tag: TagWithTracks) => (
+      ))}
+      {active === "Tags" && tags.map((tag: TagWithTracks) => (
         <li key={tag.id} className="mb-3">
           <TagTile tag={tag} />
+        </li>
+      ))}
+      {active === "Compositions" && compositions.map((composition: Composition) => (
+        <li key={composition.id} className="mb-3">
+          <CompositionTile composition={composition} />
         </li>
       ))}
     </ul>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { SdkProps } from "../../middleware";
 import { FastAverageColor } from "fast-average-color";
 import { getCompositionById, getTracksThatShareTags } from "../../common-client/compositionsManagement";
+import { TrackRowItem } from "../playlist/Playlist";
 
 function msToTime(duration: number) {
   let milliseconds = Math.floor((duration % 1000) / 100),
@@ -77,6 +78,15 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
     return <h2>loading...</h2>;
   }
 
+  async function addSongsToQueue() {
+    const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
+    while(tracks.length) {
+      const track = tracks.shift()
+      if(track?.uri)
+        await sdk.player.addItemToPlaybackQueue(track.uri)
+    }
+  }
+
   // function getNextPage() {
   //   if (trackPage?.next) {
   //     let offset = trackPage.offset + trackPage.limit;
@@ -96,7 +106,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
         </div>
         <div className="flex flex-col-reverse ml-4 pb-2">
           <div className="flex flex-row">
-            {tracks.length != trackPage?.total ? (
+            {false ? (
               <>
                 <p className="text-sm font-thin pl-[.4em] mr-2">
                   {tracks.length} / {trackPage?.total} Songs Loaded
@@ -108,6 +118,9 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
             ) : (
               <p className="text-sm font-thin pl-[.4em] mr-2">{tracks.length} Songs</p>
             )}
+            <button onClick={addSongsToQueue} className="mr-auto underline text-sm font-thin text-gray-300 transition-colors duration-150 ease-in-out hover:text-white">
+              Add to Queue
+            </button>
           </div>
           <h2 className="text-5xl pt-1 text-white">{playlist?.name}</h2>
           <p className="text-sm pl-1 font-thin text-gray-200">{playlist?.public ? "Public" : "Private"} Playlist</p>
@@ -119,28 +132,13 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
             <tr className="sticky top-0 backdrop-blur-lg pt-4">
               <th className="text-left text-sm font-thin text-gray-300 m-4 py-4">Title</th>
               <th className="text-left text-sm font-thin text-gray-300">Album</th>
-              {/* <th className="text-left text-sm font-thin text-gray-300">Added</th> */}
+              <th className="text-left text-sm font-thin text-gray-300">Tags</th>
               <th className="text-left text-sm font-thin text-gray-300">Duration</th>
             </tr>
           </thead>
           <tbody>
-            {tracks.map((t, index, arr) => {
-              const track = t as any as Track;
-              console.log("!!! LOOPING TRACKS", track);
-              return (
-                <tr key={track.id}>
-                  <td id={track.id} className="flex flex-row mb-2 pr-4 gap-4">
-                    <img src={track?.album?.images[0]?.url} className="w-12 h-12 rounded-md" />
-                    <div className="flex flex-col">
-                      <p className="">{track.name || "N/A"}</p>
-                      <p className="font-thin text-sm text-gray-400">{track?.artists?.map((artist) => artist.name).join(", ") || "N/A"}</p>
-                    </div>
-                  </td>
-                  <td className="text-sm font-thin text-gray-400">{track.album.name || "N/A"}</td>
-                  {/* <td className="text-sm font-thin text-gray-400">{new Date(t.added_at).toDateString()}</td> */}
-                  <td className="text-sm font-thin text-gray-400">{msToTime(track.duration_ms)}</td>
-                </tr>
-              );
+            {tracks.map((track, index) => {
+              return <TrackRowItem key={"" + track?.id + index} track={track} />
             })}
           </tbody>
         </table>
