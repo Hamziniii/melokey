@@ -21,11 +21,17 @@ export function getCompositionList(): Composition[] {
   return [];
 }
 
-export function createComposition({ name, description, tags }: CompositionBase) {
+export function createComposition({
+  name,
+  description,
+  tags,
+}: CompositionBase) {
   const compositionList = getCompositionList();
 
   // check that composition already exists
-  const compositionExists = compositionList.some((composition) => composition.name === name);
+  const compositionExists = compositionList.some(
+    (composition) => composition.name === name,
+  );
   if (compositionExists) {
     throw new Error("Composition " + name + " already exists!");
   }
@@ -45,7 +51,9 @@ export function createComposition({ name, description, tags }: CompositionBase) 
 }
 
 // O(n * m) where n is the number of tags and m is the number of tracks (worst case
-export function getTracksThatShareTags(tags: Array<Tag["id"]>): Array<Track["id"]> {
+export function getTracksThatShareTags(
+  tags: Array<Tag["id"]>,
+): Array<Track["id"]> {
   const tagListWithData = getTagListWithData(); // O(n) where n is the number of tags
   const trackOccurences = new Map<Track["id"], number>();
   tagListWithData.forEach((tag) => {
@@ -72,7 +80,9 @@ export function getTracksThatShareTags(tags: Array<Tag["id"]>): Array<Track["id"
 export function updateComposition(id: string, composition: CompositionBase) {
   const compositionList = getCompositionList();
 
-  const compositionIndex = compositionList.findIndex((composition) => composition.id === id);
+  const compositionIndex = compositionList.findIndex(
+    (composition) => composition.id === id,
+  );
 
   if (compositionIndex === -1) {
     throw new Error("Composition " + id + " doesn't exist!");
@@ -88,7 +98,9 @@ export function updateComposition(id: string, composition: CompositionBase) {
 
 export function deleteComposition(id: string) {
   const compositionList = getCompositionList();
-  const compositionIndex = compositionList.findIndex((composition) => composition.id === id);
+  const compositionIndex = compositionList.findIndex(
+    (composition) => composition.id === id,
+  );
 
   if (compositionIndex == -1) {
     throw new Error("Composition " + id + " doesn't exist!");

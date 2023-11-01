@@ -7,7 +7,12 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "format": "prettier src --check",
+    "format-write": "prettier . --write",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "lint": "cross-env DEBUG=eslint:cli-engine eslint --max-warnings 0",
+    "lint-write": "cross-env DEBUG=eslint:cli-engine eslint --max-warnings 0 --fix"
   },
   "dependencies": {
     "@astrojs/check": "^0.2.1",
@@ -30,6 +35,11 @@
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "@types/node": "^20.8.9"
+    "@types/node": "^20.8.9",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.52.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.0.3"
   }
 }

@@ -50,9 +50,16 @@ export function getTagWithData(id: string): TagWithTracks | undefined {
   };
 }
 
-export const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+export const randomHex = (size = 6) =>
+  "#" +
+  [...Array(size)]
+    .map(() => Math.floor(Math.random() * 16).toString(16))
+    .join("");
 
-export function createTagPlaceholders(count: number, colorful = false): TagWithTracks[] {
+export function createTagPlaceholders(
+  count: number,
+  colorful = false,
+): TagWithTracks[] {
   const tagList: TagWithTracks[] = [];
 
   for (let i = 0; i < count; i++) {
@@ -120,7 +127,7 @@ export function deleteTag(id: string) {
 
   localStorage.setItem("tagList", JSON.stringify(tagList));
 
-  localStorage.removeItem("tag-" + id)
+  localStorage.removeItem("tag-" + id);
 }
 
 // get tag by id

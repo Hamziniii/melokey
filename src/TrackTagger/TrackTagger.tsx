@@ -27,7 +27,9 @@ const TrackTagger: React.FC<AppProps> = ({ playlist }) => {
           const track = playlistedTrack.track as Track;
           const splitUri = track.uri.split(":");
           const isLocalTrack = splitUri[1] === "local";
-          const trackUrl = isLocalTrack ? track.uri : `https://open.spotify.com/track/${splitUri[2]}`;
+          const trackUrl = isLocalTrack
+            ? track.uri
+            : `https://open.spotify.com/track/${splitUri[2]}`;
 
           return (
             <div key={track.id} className="flex gap-2 flex-row items-center">

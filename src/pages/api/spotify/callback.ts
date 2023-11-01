@@ -30,7 +30,10 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   params.append("client_id", import.meta.env.SPOTIFY_CLIENT_ID);
   params.append("grant_type", "authorization_code");
   params.append("code", authCode);
-  params.append("redirect_uri", "https://melokey.vercel.app/api/spotify/callback");
+  params.append(
+    "redirect_uri",
+    "https://melokey.vercel.app/api/spotify/callback",
+  );
   params.append("code_verifier", spotifyVerifier.value);
 
   const result = await fetch("https://accounts.spotify.com/api/token", {
@@ -56,16 +59,16 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
     path: "/",
   });
 
-  const expiry = (new Date()).getTime() + expires_in * 1000;
+  const expiry = new Date().getTime() + expires_in * 1000;
   cookies.set("expires_in", "" + expiry, {
     maxAge: expires_in,
     path: "/",
-  }); 
+  });
 
   cookies.set("spotify_refresh_token", refresh_token, {
     path: "/",
     maxAge: 60 * 60 * 24 * 10,
-  })
+  });
 
   return redirect("/home");
 };
