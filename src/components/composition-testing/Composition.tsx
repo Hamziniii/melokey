@@ -122,8 +122,8 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
               Add to Queue
             </button>
           </div>
-          <h2 className="text-5xl pt-1 text-white">{playlist?.name}</h2>
-          <p className="text-sm pl-1 font-thin text-gray-200">{playlist?.public ? "Public" : "Private"} Playlist</p>
+          <h2 className="text-5xl pt-1 text-white">Composition name here</h2>
+          <p className="text-sm pl-1 font-thin text-gray-200">Composition</p>
         </div>
       </div>
       <div className="w-full h-full bg-[#0000001d] overflow-y-auto px-4 pb-4 rounded-lg relative">
@@ -138,6 +138,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
           </thead>
           <tbody>
             {tracks.map((track, index) => {
+              // TODO - make sure that this updates if the user removes the tag from the track
               return <TrackRowItem key={"" + track?.id + index} track={track} />
             })}
           </tbody>
