@@ -16,6 +16,11 @@ https://melokey.vercel.app/
 - Create compositions of tags (set operation: AND)
 - Add composition songs to queue
 
+# Screenshots
+![image](https://github.com/Hamziniii/melokey/assets/22670779/fdde286e-790d-4f82-88a8-667db8dae51d)
+![image](https://github.com/Hamziniii/melokey/assets/22670779/d85dd1ba-fa2a-4804-9114-5eb24f3ae3e6)
+![image](https://github.com/Hamziniii/melokey/assets/22670779/4b33098b-7c67-4e80-80fb-a5bd43976e28)
+
 # Your team member names and uic emails go here
 
 Angel Carbajal - acarba4@uic.edu <br>
