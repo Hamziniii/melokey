@@ -83,7 +83,7 @@ export default function TagPane() {
       <div className="h-full flex flex-col overflow-hidden">
         <h2 className="pb-1">Tag Song</h2>
         <div className="flex flex-col h-full flex-grow-0 overflow-y-auto gap-1 rounded-lg">
-        {
+        { otherTags.length > 0 ?
           otherTags.map(tag => (
             <div className="flex flex-row gap-2" key={tag.id}>
               <div className="bg-gradient-to-b flex-shrink-0 from-slate-600 to-bg-zinc-800 rounded-lg h-12 w-12 cursor-pointer" style={{"--tw-gradient-from": tag.color} as React.CSSProperties} onClick={() => addTag(tag)}>
@@ -96,7 +96,11 @@ export default function TagPane() {
                <p className="text-zinc-300 text-sm overflow-ellipsis overflow-hidden whitespace-nowrap font-thin">{tag.tracks.length} Songs</p>
               </div>
             </div>
-          ))
+          )) :
+          <>
+            <p className="text-zinc-100 text-sm overflow-ellipsis overflow-hidden whitespace-nowrap">No tags</p>
+            <p className="text-zinc-300 text-xs overflow-ellipsis overflow-hidden whitespace-nowrap font-thin">Maybe you should create some tags 👀</p>
+          </>
         }
         </div>
       </div>

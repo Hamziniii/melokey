@@ -36,11 +36,10 @@ export function addTrackToTagList(trackData: Track, tagId: string) {
     throw new Error("Tag " + tagId + " doesn't exist!");
   }
 
-  // add song uri to tag's specific list
-  const tagTracks = getTracksForTag(tagId);
-
-  tagTracks.push(trackData.id);
-  setTracksForTag(tagId, tagTracks);
+  // add song uri to tag's specific list, NO DUPLICATES
+  const tagTracks = new Set(getTracksForTag(tagId));
+  tagTracks.add(trackData.id);
+  setTracksForTag(tagId, [...tagTracks]);
 }
 
 export function removeTrackFromTagList(trackData: Track, tagId: string) {

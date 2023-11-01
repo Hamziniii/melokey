@@ -12,6 +12,7 @@ export type Tag = BaseTag & {
 export type TagWithTracks = Tag & { tracks: Track["id"][] };
 
 // return a list of all tags
+// O(1)
 export function getTagList(): Tag[] {
   // check localstorage for tag list
   // if not found, return empty array
@@ -26,6 +27,7 @@ export function getTagList(): Tag[] {
   return [];
 }
 
+// O(n) where n is the number of tags (worst case
 export function getTagListWithData(): TagWithTracks[] {
   const tagList = getTagList();
 
@@ -35,16 +37,30 @@ export function getTagListWithData(): TagWithTracks[] {
   }));
 }
 
+export function getTagWithData(id: string): TagWithTracks | undefined {
+  const tag = getTagById(id);
+
+  if (!tag) {
+    return undefined;
+  }
+
+  return {
+    ...tag,
+    tracks: JSON.parse(localStorage.getItem("tag-" + tag.id) ?? "[]"),
+  };
+}
+
 export const randomHex = (size = 6) => "#" + [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
 
-export function createTagPlaceholders(count: number): Tag[] {
-  const tagList: Tag[] = [];
+export function createTagPlaceholders(count: number, colorful = false): TagWithTracks[] {
+  const tagList: TagWithTracks[] = [];
 
   for (let i = 0; i < count; i++) {
     tagList.push({
       id: (Date.now() - Math.floor(Math.random() * 10000)).toString(),
       name: "placeholder",
-      color: randomHex(),
+      color: colorful ? randomHex() : "#1b1647",
+      tracks: [],
     });
   }
 
@@ -68,7 +84,6 @@ export function createNewTag({ name, color }: BaseTag) {
   };
 
   tagList.push(newTag);
-
   localStorage.setItem("tagList", JSON.stringify(tagList));
 }
 
@@ -88,6 +103,21 @@ export function updateTag({ id, name, color }: Tag) {
   };
 
   localStorage.setItem("tagList", JSON.stringify(tagList));
+}
+
+export function deleteTag(id: string) {
+  const tagList = getTagList();
+  const tagIndex = tagList.findIndex((tag) => tag.id === id);
+
+  if (tagIndex == -1) {
+    throw new Error("Tag " + id + " doesn't exist!");
+  }
+
+  tagList.splice(tagIndex, 1);
+
+  localStorage.setItem("tagList", JSON.stringify(tagList));
+
+  localStorage.removeItem("tag-" + id)
 }
 
 // get tag by id

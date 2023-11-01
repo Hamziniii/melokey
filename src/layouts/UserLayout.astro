@@ -1,6 +1,8 @@
 ---
 import BaseLayout from './BaseLayout.astro'
 import Library from '../components/library/Library'
+import Modal from '../components/modal/Modal'
+import ExposeSdkProps from '../globals/ExposeSdkProps'
 import type { Locals } from '../middleware';
 
 interface Props {
@@ -48,4 +50,6 @@ const timeLeft = expires_in ? Math.max(parseInt(expires_in) - (new Date()).getTi
       window.location.reload();
     }, timeLeft);
   </script>
+  <Modal client:only />
+  <ExposeSdkProps sdkProps={sdkProps} client:only />
 </BaseLayout>
