@@ -38,12 +38,12 @@ export default function NewTag() {
         </div>
         <div className="w-12 h-12 rounded-lg bg-gradient-to-b from-slate-600" style={{"--tw-gradient-from": color} as React.CSSProperties}/>
       </div>
-      <form action="" className="flex flex-col mt-4" autoComplete="false">
+      <form action="" className="flex flex-col mt-4" autoComplete="off">
         <label className="text-sm text-gray-400 font-thin">Tag Name</label>
-        <input id="name" className="bg-zinc-800 rounded-lg p-2 text-white" required />
+        <input id="name" className="bg-zinc-800 rounded-lg p-2 text-white" required autoComplete="off"/>
         
         <label className="text-sm text-gray-400 font-thin mt-4">Tag Color (in hex)</label>
-        <input className="bg-zinc-800 rounded-lg p-2 text-white" type="text" id="hex_code" name="hex_code" onKeyUp={updateColor} ref={colorRef} pattern="#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?" required/>
+        <input className="bg-zinc-800 rounded-lg p-2 text-white" type="text" id="hex_code" name="hex_code" onKeyUp={updateColor} ref={colorRef} pattern="#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?" required  autoComplete="off"/>
 
         <button type="button" className="bg-zinc-800 hover:bg-green-500 rounded-lg p-2 text-white mt-4 transition-colors ease-in-out duration-200" onClick={submit}>Create Tag</button>
       </form>

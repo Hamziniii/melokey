@@ -5,6 +5,7 @@ import { getTagWithData, type Tag, type TagWithTracks } from "../../common-clien
 import { TrackRowItem } from "../playlist/Playlist"
 import { openModal } from "../modal/store"
 import DeleteTag from "../modal/DeleteTag"
+import EditTag from "../modal/EditTag"
 
 function partitionToChunks<T>(array: T[], chunkSize: number) {
   const results = []
@@ -55,6 +56,15 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
     if(tag)
       openModal(<DeleteTag tag={tag} />)
   }
+
+  function editTag() {
+    if(tag)
+      openModal(<EditTag tag={tag} />, () => {
+        let _tag = getTagWithData(tagId)
+        if(_tag)
+          setTag(_tag)
+      })
+  }
   
   async function addSongsToQueue() {
     const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
@@ -79,6 +89,7 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
           <p className="text-sm font-thin pl-[.2em]">{trackCount} Songs</p>
           <button className="text-sm font-thin text-gray-400 underline hover:text-green-500 transition-colors ease-in-out duration-150 cursor-pointer select-none" onClick={addSongsToQueue}>Add to Queue</button>
           <button className="text-sm font-thin text-gray-400 underline hover:text-red-500 transition-colors ease-in-out duration-150 cursor-pointer select-none" onClick={deleteTag}>Delete Tag</button>
+          <button className="text-sm font-thin text-gray-400 underline hover:text-white transition-colors ease-in-out duration-150 cursor-pointer select-none" onClick={editTag}>Edit Tag</button>
         </div>
         <h2 className="text-5xl pt-1 text-white">{tag?.name}</h2>
         <p className="text-sm pl-[.1em] font-thin text-gray-200">Tag</p>
