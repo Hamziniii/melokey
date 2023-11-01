@@ -30,7 +30,7 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   params.append("client_id", import.meta.env.SPOTIFY_CLIENT_ID);
   params.append("grant_type", "authorization_code");
   params.append("code", authCode);
-  params.append("redirect_uri", "http://melokey.vercel.app/api/spotify/callback");
+  params.append("redirect_uri", "https://melokey.vercel.app/api/spotify/callback");
   params.append("code_verifier", spotifyVerifier.value);
 
   const result = await fetch("https://accounts.spotify.com/api/token", {
