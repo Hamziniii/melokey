@@ -56,6 +56,16 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
       openModal(<DeleteTag tag={tag} />)
   }
   
+  async function addSongsToQueue() {
+    const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
+    const tracks = trackEntries 
+    while(tracks.length) {
+      const track = tracks.shift()
+      if(track?.uri)
+        await sdk.player.addItemToPlaybackQueue(track.uri)
+    }
+  }
+
   useEffect(() => {
     setTrackEntries(Object.values(trackMap).filter(track => track !== null) as Track[])
   }, [trackMap])
@@ -65,8 +75,9 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
       <div className="self-center flex-shrink-0 w-32 h-32 min-w-56 min-h-56 rounded-md bg-gradient-to-b from-slate-600 to-bg-zinc-800" style={{"--tw-gradient-from": tag?.color} as React.CSSProperties}>
       </div>
       <div className="flex flex-col-reverse ml-4 pb-2">
-        <div className="flex flex-row">
-          <p className="text-sm font-thin pl-[.2em] mr-2">{trackCount} Songs</p>
+        <div className="flex flex-row gap-2">
+          <p className="text-sm font-thin pl-[.2em]">{trackCount} Songs</p>
+          <button className="text-sm font-thin text-gray-400 underline hover:text-green-500 transition-colors ease-in-out duration-150 cursor-pointer select-none" onClick={addSongsToQueue}>Add to Queue</button>
           <button className="text-sm font-thin text-gray-400 underline hover:text-red-500 transition-colors ease-in-out duration-150 cursor-pointer select-none" onClick={deleteTag}>Delete Tag</button>
         </div>
         <h2 className="text-5xl pt-1 text-white">{tag?.name}</h2>
