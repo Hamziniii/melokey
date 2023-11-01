@@ -3,6 +3,8 @@ import { useEffect, useState,  } from "react"
 import type { SdkProps } from "../../middleware"
 import { getTagWithData, type Tag, type TagWithTracks } from "../../common-client/tagManagement"
 import { TrackRowItem } from "../playlist/Playlist"
+import { openModal } from "../modal/store"
+import DeleteTag from "../modal/DeleteTag"
 
 function partitionToChunks<T>(array: T[], chunkSize: number) {
   const results = []
@@ -18,6 +20,7 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
   const [trackMap, setTrackMap] = useState<IdToTrack>({})
   const [tag, setTag] = useState<TagWithTracks | null>(null)
   const [trackCount, setTrackCount] = useState<number>(0)
+  const [trackEntries, setTrackEntries] = useState<Track[]>([])
 
   useEffect(() => {
     try {
@@ -34,19 +37,28 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
       const trackPartition = partitionToChunks(tracks, 50)
       const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
 
-      trackPartition.forEach(partition => {
-        sdk.tracks.get(partition).then(tracks => {
-          let _tM = {...trackMap} 
+      let _tM = {...trackMap}
+      const ps = trackPartition.map(partition => {
+        return sdk.tracks.get(partition).then(tracks => { 
           tracks.forEach(track => {
             _tM[track.id] = track
           })
-          setTrackMap(_tM)
         })
       })
+      Promise.allSettled(ps).then(() => setTrackMap(_tM))
     } catch(e) {
       console.error(e)
     }
   }, [])
+
+  function deleteTag() {
+    if(tag)
+      openModal(<DeleteTag tag={tag} />)
+  }
+  
+  useEffect(() => {
+    setTrackEntries(Object.values(trackMap).filter(track => track !== null) as Track[])
+  }, [trackMap])
 
   return <div id="playlist-main" className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
     <div className="mt-16 flex flex-row pb-4">
@@ -54,7 +66,8 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
       </div>
       <div className="flex flex-col-reverse ml-4 pb-2">
         <div className="flex flex-row">
-            <p className="text-sm font-thin pl-[.2em] mr-2">{trackCount} Songs</p>
+          <p className="text-sm font-thin pl-[.2em] mr-2">{trackCount} Songs</p>
+          <button className="text-sm font-thin text-gray-400 underline hover:text-red-500 transition-colors ease-in-out duration-150 cursor-pointer select-none" onClick={deleteTag}>Delete Tag</button>
         </div>
         <h2 className="text-5xl pt-1 text-white">{tag?.name}</h2>
         <p className="text-sm pl-[.1em] font-thin text-gray-200">Tag</p>
@@ -70,7 +83,7 @@ export default function Tag({sdkProps, tagId}: {sdkProps: SdkProps, tagId: strin
           </tr>
         </thead>
         <tbody>
-          {Object.values(trackMap).map(track => track ? TrackRowItem({track}) : null)}
+          {trackEntries.map(track => track ? <TrackRowItem key={track.id} track={track} /> : null)}
         </tbody>
       </table>
     </div>

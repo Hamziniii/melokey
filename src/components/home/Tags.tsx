@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { createTagPlaceholders, getTagList, getTagListWithData, type Tag, type TagWithTracks } from "../../common-client/tagManagement";
 import Cookies from "js-cookie"
+import { openModal } from "../modal/store";
+import NewTagModal from "../modal/NewTag";
 
 export function NewTag() {
   function click() {
-    alert("New Tag")
+    openModal((<NewTagModal />), () => 
+      []// window.location.reload()
+    )
   }
 
   return <div className="my-4 mx-2 p-4 transition-colors duration-200 ease-in-out bg-transparent rounded-lg hover:bg-[#ffffff0a] cursor-pointer" onClick={click}>
@@ -21,10 +25,14 @@ export function NewTag() {
 export default function TagsView({tagCount = 4} : {tagCount?: number}) {
   const [tags, setTags] = useState<TagWithTracks[]>(createTagPlaceholders(tagCount || 4))
 
-  useEffect(() => {
+  function updateTags() {
     const _tags = getTagListWithData()
     setTags(_tags)
     Cookies.set("tagCount", _tags.length.toString())
+  }
+
+  useEffect(() => {
+    updateTags()
   }, [])
 
   return <>

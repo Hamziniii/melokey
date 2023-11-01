@@ -84,7 +84,6 @@ export function createNewTag({ name, color }: BaseTag) {
   };
 
   tagList.push(newTag);
-
   localStorage.setItem("tagList", JSON.stringify(tagList));
 }
 
@@ -104,6 +103,21 @@ export function updateTag({ id, name, color }: Tag) {
   };
 
   localStorage.setItem("tagList", JSON.stringify(tagList));
+}
+
+export function deleteTag(id: string) {
+  const tagList = getTagList();
+  const tagIndex = tagList.findIndex((tag) => tag.id === id);
+
+  if (tagIndex == -1) {
+    throw new Error("Tag " + id + " doesn't exist!");
+  }
+
+  tagList.splice(tagIndex, 1);
+
+  localStorage.setItem("tagList", JSON.stringify(tagList));
+
+  localStorage.removeItem("tag-" + id)
 }
 
 // get tag by id
