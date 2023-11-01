@@ -6,6 +6,16 @@ https://melokey.vercel.app/
 > [!IMPORTANT]  
 > If you'd like to test the live site, please reach out to one of the team members with an email associated with a Spotify Premium account.
 
+# Current features 
+- Get spotify playlists
+- Get current playback
+- CRUD operation on tags
+- Tag song currently playing
+- Tag songs in playlist
+- Add tagged songs to playback queue
+- Create compositions of tags (set operation: AND)
+- Add composition songs to queue
+
 # Your team member names and uic emails go here
 
 Angel Carbajal - acarba4@uic.edu <br>
