@@ -1,13 +1,13 @@
 <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog#handling_the_return_value_from_the_dialog -->
-<button id="show-tag-dialog-button" class="px-4 py-2 rounded-lg bg-green-500">new tag</button>
+<button id="show-tag-dialog-button" class="px-4 py-2 rounded-lg bg-green-500">New Tag</button>
 
-<dialog id="new-tag-dialog">
+<dialog id="new-tag-dialog" class="bg-gray-600 text-white p-5">
   <form>
     <p id="new-tag-form-feedback"></p>
     <p>
       <label>
         new tag name:
-        <input type="text" name="tag-name" id="new-tag-input" />
+        <input type="text" name="tag-name" id="new-tag-input" class="text-black" />
       </label>
     </p>
     <div>
@@ -19,7 +19,6 @@
 
 <script>
   import { getTagByName, createNewTag, randomHex } from "../common-client/tagManagement";
-  
 
   const showDialogButton = document.getElementById("show-tag-dialog-button")! as HTMLButtonElement;
   const newTagDialog = document.getElementById("new-tag-dialog")! as HTMLDialogElement;
@@ -32,7 +31,7 @@
     newTagDialog.showModal();
   });
 
-  // "Favorite animal" input sets the value of the submit button
+  // text input sets the value of the submit button
   textInputElement.addEventListener("change", (e) => {
     confirmBtn.value = textInputElement.value;
   });
@@ -44,7 +43,9 @@
     }
 
     // TODO add a color picker so people can pick a color for their tag
-    createNewTag({ name: newTagDialog.returnValue, color: randomHex() });
+    const newTagId = createNewTag({ name: newTagDialog.returnValue, color: randomHex() });
+    document.location.href = "/tag-viewer/" + newTagId;
+
   });
 
   // https://stackoverflow.com/a/3261380

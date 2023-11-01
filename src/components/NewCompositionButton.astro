@@ -1,0 +1,129 @@
+---
+
+---
+
+<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog#handling_the_return_value_from_the_dialog -->
+<button id="show-composition-dialog-button" class="px-4 py-2 rounded-lg bg-purple-500">New Composition</button>
+
+<dialog id="new-composition-dialog" class="bg-gray-600 text-white p-5">
+  <form>
+    <p id="new-composition-form-feedback"></p>
+    <p>
+      <label>
+        new composition name:
+        <input type="text" name="composition-name" id="new-composition-input" class="text-black" />
+      </label>
+      <br />
+      <label>
+        description:
+        <input type="text" name="composition-name" id="new-composition-input" class="text-black" />
+      </label>
+      <br />
+      <label>
+        tags:
+        <div id="new-composition-tag-list"></div>
+      </label>
+    </p>
+    <div>
+      <button value="" formmethod="dialog" class="bg-gray-600">Cancel</button>
+      <button id="create-new-composition-button" value="" class="bg-green-500">Confirm</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+  import { createComposition, getCompositionByName } from "../common-client/compositionsManagement";
+  import { getTagList } from "../common-client/tagManagement";
+
+  const showDialogButton = document.getElementById("show-composition-dialog-button")! as HTMLButtonElement;
+  const newCompositionDialog = document.getElementById("new-composition-dialog")! as HTMLDialogElement;
+  const textNameElement = document.getElementById("new-composition-input")! as HTMLInputElement;
+  const textDescElement = document.getElementById("new-composition-input")! as HTMLInputElement;
+  const confirmBtn = document.getElementById("create-new-composition-button")! as HTMLButtonElement;
+  const formFeedbackText = document.getElementById("new-composition-form-feedback")! as HTMLParagraphElement;
+  const tagListWrapper = document.getElementById("new-composition-tag-list")! as HTMLDivElement;
+
+  const tagList = getTagList();
+  // for each tag create checkbox
+  for (const tag of tagList) {
+    const tagCheckbox = document.createElement("input") as HTMLInputElement;
+    tagCheckbox.type = "checkbox";
+    tagCheckbox.name = tag.name;
+    tagCheckbox.value = tag.name;
+    tagCheckbox.id = tag.id;
+    tagListWrapper.appendChild(tagCheckbox);
+
+    const tagLabel = document.createElement("label");
+    tagLabel.htmlFor = tag.name;
+    tagLabel.textContent = tag.name;
+    tagListWrapper.appendChild(tagLabel);
+  }
+
+  // get list off all checked boxes
+
+  // "Show the dialog" button opens the <dialog> modally
+  showDialogButton.addEventListener("click", () => {
+    newCompositionDialog.showModal();
+  });
+
+  // text input sets the value of the submit button
+  // textInputElement.addEventListener("change", (e) => {
+  //   confirmBtn.value = textInputElement.value;
+  // });
+
+  // this is where the composition name actually gets submitted from the dialog
+  // newCompositionDialog.addEventListener("close", (e) => {
+  //   if (isStringBlank(newCompositionDialog.returnValue)) {
+  //     return;
+  //   }
+
+  //   // TODO add a color picker so people can pick a color for their composition
+  //   // createComposition({ name: newCompositionDialog.returnValue });
+  // });
+
+  // https://stackoverflow.com/a/3261380
+  function isStringBlank(str: string) {
+    return !str || /^\s*$/.test(str);
+  }
+
+  function formCheck() {
+    formFeedbackText.textContent = "";
+    if (isStringBlank(textNameElement.value)) {
+      formFeedbackText.textContent = "Please enter a composition name";
+      return;
+    }
+
+    if (getCompositionByName(textNameElement.value)) {
+      formFeedbackText.textContent = "Composition already exists.";
+      return;
+    }
+
+    if (isStringBlank(textDescElement.value)) {
+      formFeedbackText.textContent = "Please enter a composition name";
+      return;
+    }
+
+    const checkedBoxes = tagListWrapper.querySelectorAll("input:checked");
+    console.log(checkedBoxes);
+    // get ids of all checked boxes
+    const checkedBoxIds = Array.from(checkedBoxes).map((checkbox) => checkbox.id);
+
+    // newCompositionDialog.close(textInputElement.value);
+    const newCompId = createComposition({ name: textNameElement.value, description: textDescElement.value, tags: checkedBoxIds });
+    document.location.href = "/composition-test/" + newCompId;
+    // go to /composition/<composition-name>
+  }
+
+  // submit form if the user presses enter while theyre focused on the text input
+  // textInputElement.addEventListener("keypress", (e) => {
+  //   if (e.key === "Enter") {
+  //     confirmBtn.click();
+  //   }
+  // });
+
+  // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
+  confirmBtn.addEventListener("click", (event) => {
+    event.preventDefault(); // We don't want to submit this fake form
+    formCheck();
+  });
+</script>

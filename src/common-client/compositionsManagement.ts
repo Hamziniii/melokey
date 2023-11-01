@@ -29,9 +29,10 @@ export function createComposition({ name, description, tags }: CompositionBase) 
   if (compositionExists) {
     throw new Error("Composition " + name + " already exists!");
   }
+  const id = (Date.now() - Math.floor(Math.random() * 10000)).toString();
 
   const newComposition: Composition = {
-    id: (Date.now() - Math.floor(Math.random() * 10000)).toString(),
+    id,
     name,
     description,
     tags,
@@ -40,15 +41,19 @@ export function createComposition({ name, description, tags }: CompositionBase) 
   compositionList.push(newComposition);
 
   localStorage.setItem("compositionList", JSON.stringify(compositionList));
+  return id;
 }
 
 // O(n * m) where n is the number of tags and m is the number of tracks (worst case
 export function getTracksThatShareTags(tags: Array<Tag["id"]>): Array<Track["id"]> {
   const tagListWithData = getTagListWithData(); // O(n) where n is the number of tags
   const trackOccurences = new Map<Track["id"], number>();
-  tagListWithData.forEach((tag) => { // For each tag (O(n) where n is the number of tags)
-    if (tags.some((tagId) => tag.id === tagId)) { // If the tag is in the list of tags we're looking for
-      tag.tracks.forEach((track) => { // For each track in the tag (O(m) where m is the number of tracks
+  tagListWithData.forEach((tag) => {
+    // For each tag (O(n) where n is the number of tags)
+    if (tags.some((tagId) => tag.id === tagId)) {
+      // If the tag is in the list of tags we're looking for
+      tag.tracks.forEach((track) => {
+        // For each track in the tag (O(m) where m is the number of tracks
         // Increment the number of occurences of the track O(1)
         trackOccurences.set(track, (trackOccurences.get(track) ?? 0) + 1);
       });
@@ -56,12 +61,12 @@ export function getTracksThatShareTags(tags: Array<Tag["id"]>): Array<Track["id"
   });
 
   // O(m) where m is the number of tracks
-  const tracks = Array.from(trackOccurences.entries()) // 
-    // Remove filter if we want to do OR set operation instead of AND set operation 
+  const tracks = Array.from(trackOccurences.entries()) //
+    // Remove filter if we want to do OR set operation instead of AND set operation
     .filter(([, occurences]) => occurences === tags.length)
     .map(([track]) => track);
 
-  return tracks
+  return tracks;
 }
 
 export function updateComposition(id: string, composition: CompositionBase) {
@@ -77,6 +82,19 @@ export function updateComposition(id: string, composition: CompositionBase) {
     ...compositionList[compositionIndex],
     ...composition,
   };
+
+  localStorage.setItem("compositionList", JSON.stringify(compositionList));
+}
+
+export function deleteComposition(id: string) {
+  const compositionList = getCompositionList();
+  const compositionIndex = compositionList.findIndex((composition) => composition.id === id);
+
+  if (compositionIndex == -1) {
+    throw new Error("Composition " + id + " doesn't exist!");
+  }
+
+  compositionList.splice(compositionIndex, 1);
 
   localStorage.setItem("compositionList", JSON.stringify(compositionList));
 }

@@ -2,8 +2,10 @@ import { SpotifyApi, type SimplifiedPlaylist, type PlaylistedTrack, type Page, t
 import { useEffect, useState } from "react";
 import type { SdkProps } from "../../middleware";
 import { FastAverageColor } from "fast-average-color";
-import { getCompositionById, getTracksThatShareTags } from "../../common-client/compositionsManagement";
+import { getCompositionById, getTracksThatShareTags, type Composition } from "../../common-client/compositionsManagement";
 import { TrackRowItem } from "../playlist/Playlist";
+import DeleteComposition from "../modal/DeleteComposition";
+import { openModal } from "../modal/store";
 
 function msToTime(duration: number) {
   let milliseconds = Math.floor((duration % 1000) / 100),
@@ -39,6 +41,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
   const [trackPage, setTrackPage] = useState<Page<PlaylistedTrack> | null>(null);
   const [tracks, setTracks] = useState<Track[]>([]);
   const [color, setColor] = useState<string | null>(null);
+  const [compositionData, setCompositionData] = useState<Composition | null | undefined>(null);
 
   useEffect(() => {
     if (image) {
@@ -58,6 +61,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
   useEffect(() => {
     // grab composition data
     const composition = getCompositionById(compositionId);
+    setCompositionData(composition);
 
     if (!composition) {
       return setIsPageReady(true);
@@ -67,7 +71,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
     const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
     setSdk(_sdk);
 
-    if(trackList.length > 0)
+    if (trackList.length > 0)
       _sdk.tracks.get(trackList).then((tracks) => {
         setTracks(tracks);
         setIsPageReady(true);
@@ -78,12 +82,15 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
     return <h2>loading...</h2>;
   }
 
+  if (!compositionData) {
+    return <h2 className="text-3xl">Composition not found!</h2>;
+  }
+
   async function addSongsToQueue() {
-    const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
-    while(tracks.length) {
-      const track = tracks.shift()
-      if(track?.uri)
-        await sdk.player.addItemToPlaybackQueue(track.uri)
+    const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
+    while (tracks.length) {
+      const track = tracks.shift();
+      if (track?.uri) await sdk.player.addItemToPlaybackQueue(track.uri);
     }
   }
 
@@ -97,6 +104,10 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
   //   }
   // }
 
+  function deleteComposition() {
+    if (compositionData) openModal(<DeleteComposition composition={compositionData} />);
+  }
+
   return (
     <div id="playlist-main" className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
       {/* <style>{jankyCSS}</style> */}
@@ -105,7 +116,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
           {image ? <img id="playlist-img" crossOrigin="anonymous" src={image} className="w-56 h-56 rounded-md" /> : <div className="text-6xl">no image</div>}
         </div>
         <div className="flex flex-col-reverse ml-4 pb-2">
-          <div className="flex flex-row">
+          <div className="flex flex-row gap-2">
             {false ? (
               <>
                 <p className="text-sm font-thin pl-[.4em] mr-2">
@@ -121,8 +132,14 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
             <button onClick={addSongsToQueue} className="mr-auto underline text-sm font-thin text-gray-300 transition-colors duration-150 ease-in-out hover:text-white">
               Add to Queue
             </button>
+            <button
+              className="text-sm font-thin text-gray-400 underline hover:text-red-500 transition-colors ease-in-out duration-150 cursor-pointer select-none"
+              onClick={deleteComposition}
+            >
+              Delete Composition
+            </button>
           </div>
-          <h2 className="text-5xl pt-1 text-white">Composition name here</h2>
+          <h2 className="text-5xl pt-1 text-white">{compositionData?.name}</h2>
           <p className="text-sm pl-1 font-thin text-gray-200">Composition</p>
         </div>
       </div>
@@ -139,7 +156,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
           <tbody>
             {tracks.map((track, index) => {
               // TODO - make sure that this updates if the user removes the tag from the track
-              return <TrackRowItem key={"" + track?.id + index} track={track} />
+              return <TrackRowItem key={"" + track?.id + index} track={track} />;
             })}
           </tbody>
         </table>

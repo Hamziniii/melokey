@@ -77,14 +77,17 @@ export function createNewTag({ name, color }: BaseTag) {
     throw new Error("Tag " + name + " already exists!");
   }
 
+  const id = Date.now().toString();
+
   const newTag = {
-    id: Date.now().toString(),
+    id,
     name,
     color,
   };
 
   tagList.push(newTag);
   localStorage.setItem("tagList", JSON.stringify(tagList));
+  return id;
 }
 
 // update a tag based on its id
