@@ -1,0 +1,30 @@
+---
+import type { Playlist, Episode, Track } from "@spotify/web-api-ts-sdk";
+import PlaylistLayout from "../../layouts/PlaylistLayout.astro";
+import TrackTagger from "../../TrackTagger/TrackTagger.tsx";
+
+const { playlistId } = Astro.params;
+
+const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
+if (!spotifyAccessToken) {
+  return Astro.redirect("/?error=token_missing");
+}
+
+// TODO this is paginated with an offset. get all playlists instead of just the first 20
+const result = await fetch("https://api.spotify.com/v1/playlists/" + playlistId, {
+  method: "GET",
+  headers: { Authorization: `Bearer ${spotifyAccessToken.value}` },
+});
+
+// TODO implement better error handling with feedback
+if (!result.ok) {
+  console.log("error fetching playlists", await result.text());
+  return Astro.redirect("/error?error=not_authorized");
+}
+
+const playlist: Playlist = await result.json();
+---
+
+<PlaylistLayout title="dashboard">
+  <TrackTagger client:only="react" playlist={playlist} />
+</PlaylistLayout>

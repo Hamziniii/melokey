@@ -1,0 +1,12 @@
+---
+import UserLayout from "../../layouts/UserLayout.astro";
+import type { Locals } from "../../middleware";
+import Composition from "../../components/composition-testing/Composition";
+
+const { compositionId } = Astro.params;
+const sdkProps = (Astro.locals as Locals).sdkProps;
+---
+
+<UserLayout title="Viewing Playlist">
+  <Composition sdkProps={sdkProps} compositionId={compositionId ?? ""} client:load />
+</UserLayout>

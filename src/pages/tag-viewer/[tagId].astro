@@ -1,0 +1,12 @@
+---
+import Tag from "../../components/tag/Tag";
+import UserLayout from "../../layouts/UserLayout.astro";
+import type { Locals } from "../../middleware";
+
+const { tagId } = Astro.params;
+const sdkProps = (Astro.locals as Locals).sdkProps;
+---
+
+<UserLayout title="Viewing Playlist">
+  <Tag sdkProps={sdkProps} tagId={tagId ?? ""} client:load/>
+</UserLayout>

@@ -1,0 +1,143 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// nodejs import crypto module
+import { createHash } from "node:crypto";
+
+// check if the user is logged in before doing anything
+const spotifyAccessToken = Astro.cookies.get("spotify_access_token");
+if (spotifyAccessToken) {
+  return Astro.redirect("/home");
+}
+
+const SPOTIFY_CLIENT_ID = import.meta.env.SPOTIFY_CLIENT_ID;
+// const SPOTIFY_CLIENT_SECRET = import.meta.env.SPOTIFY_CLIENT_SECRET;
+const cryptoHash = createHash("sha256");
+
+// https://github.com/spotify/web-api-examples/blob/999766d548700de77f15b294df8b96587f313cd0/get_user_profile/src/authCodeWithPkce.ts#L38
+function generateCodeVerifier(length: number) {
+  let text = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
+
+async function generateCodeChallenge(codeVerifier: string) {
+  const data = new TextEncoder().encode(codeVerifier);
+  cryptoHash.update(data);
+  const digest = await cryptoHash.digest();
+  return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+const verifier = generateCodeVerifier(128);
+const challenge = await generateCodeChallenge(verifier);
+
+Astro.cookies.set("spotify_verifier", verifier);
+
+// construct oauth login link
+const params = new URLSearchParams();
+params.append("client_id", SPOTIFY_CLIENT_ID);
+params.append("response_type", "code");
+// redirect to current host + /callback
+params.append("redirect_uri", Astro.url.origin + "/api/spotify/callback");
+params.append("scope", "user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state");
+params.append("code_challenge_method", "S256");
+params.append("code_challenge", challenge);
+
+var state = generateCodeVerifier(16);
+Astro.cookies.set("spotify_auth_state", state);
+params.append("state", state);
+
+const spotifyOAuthLink = `https://accounts.spotify.com/authorize?${params.toString()}`;
+
+const error = Astro.url.searchParams.get("error")
+const loggedOut = Astro.url.searchParams.get("logout")
+
+let errorDescription = ""; 
+
+switch(error) {
+  case "token_missing":
+    errorDescription = "It looks like we don't have your Spotify Token! Please log into Spotify again.";
+    break;
+  case "not_authorized":
+    errorDescription = "Hmm, looks like we don't have the correct Spotify permissions. Please log into Spotify again.";
+    break;
+  case "token_error":
+    errorDescription = "Looks like there was an issue with your Spotify token. Please log into Spotify again.";
+    break;
+  default:
+    errorDescription = "Looks like there was an issue. Please log into Spotify again.";
+    break;
+}
+
+---
+
+<BaseLayout title="Welcome to Astro.">
+
+  <main>
+    <h1 class="font-bold pt-8 text-center text-6xl pb-8">melokey</h1>
+    {error && (
+      <div class="bg-gray-950 px-40 py-8 mb-4 rounded-xl text-center flex flex-col">
+        <h2 class="font-bold text-red-500 pb-4 text-center text-2xl">Error: {error}</h2>
+        <p class="text-base text-gray-400 font-thin">
+          {errorDescription}
+        </p>
+      </div>
+    )}
+    {loggedOut && (
+      <div class="bg-gray-950 px-40 py-8 mb-4 rounded-xl text-center flex flex-col">
+        <h2 class="font-bold text-gray-300 pb-4 text-center text-2xl">Logged Out</h2>
+        <p class="text-base text-gray-400 font-thin">
+          You have been logged out of your Spotify account. Please log in again.
+        </p>
+      </div>
+    )}
+    <div class="bg-gray-950 px-48 py-8 rounded-xl flex flex-col">
+      <h2 class="font-bold pb-8 text-center text-3xl">Login to Spotify!</h2>
+      <a href={spotifyOAuthLink} class="login-with-spotify">Login</a>
+      <hr class="m-4 border-gray-700">
+      <p class="text-sm text-gray-400 font-thin">
+        In order to access your Spotify details, we require users to authenticate via OAuth. Do note that if you have not previously contacted the owners of this application with your Account details, you will get an authentication error. If you wish to delete your data call the <i>WAAambulance</i> cause we got a crybaby over here.
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+    color: white;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  /* h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin-bottom: 1em;
+  } */
+  .instructions {
+    margin-bottom: 2rem;
+    background: rgb(12, 75, 70);
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+  .login-with-spotify {
+    background: #1db954;
+    color: #000;
+    text-align: center;
+    font-weight: bold;
+    padding: 1.5rem;
+    border-radius: 5rem;
+  }
+</style>

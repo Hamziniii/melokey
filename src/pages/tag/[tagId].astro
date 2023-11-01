@@ -1,0 +1,26 @@
+---
+import PlaylistLayout from "../../layouts/PlaylistLayout.astro";
+
+const { tagId: tagAstroParam } = Astro.params;
+---
+
+<PlaylistLayout title="Viewing Tag">
+  <h1 data-tagid={tagAstroParam} id="tag-grabber">Viewing Tag: {tagAstroParam}</h1>
+  <pre id="tag-debug"></pre>
+</PlaylistLayout>
+
+<script>
+  import { getTagById } from "../../common-client/tagManagement";
+  const debugElement = document.querySelector("#tag-debug") as HTMLPreElement;
+  const tagGrabberElement = document.querySelector("#tag-grabber") as HTMLHeadingElement;
+  const tagAstroParam = tagGrabberElement.dataset.tagid;
+
+  if (!tagAstroParam) {
+    throw new Error("No tag ID provided");
+  }
+
+  console.log(tagAstroParam);
+
+  const tag = getTagById(tagAstroParam);
+  debugElement.innerHTML = JSON.stringify(tag, null, 2);
+</script>

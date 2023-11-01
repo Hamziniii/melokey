@@ -1,0 +1,84 @@
+<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog#handling_the_return_value_from_the_dialog -->
+<button id="show-tag-dialog-button" class="px-4 py-2 rounded-lg bg-green-500">New Tag</button>
+
+<dialog id="new-tag-dialog" class="bg-gray-600 text-white p-5">
+  <form>
+    <p id="new-tag-form-feedback"></p>
+    <p>
+      <label>
+        new tag name:
+        <input type="text" name="tag-name" id="new-tag-input" class="text-black" />
+      </label>
+    </p>
+    <div>
+      <button value="" formmethod="dialog" class="bg-gray-600">Cancel</button>
+      <button id="create-new-tag-button" value="" class="bg-green-500">Confirm</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+  import { getTagByName, createNewTag, randomHex } from "../common-client/tagManagement";
+
+  const showDialogButton = document.getElementById("show-tag-dialog-button")! as HTMLButtonElement;
+  const newTagDialog = document.getElementById("new-tag-dialog")! as HTMLDialogElement;
+  const textInputElement = document.getElementById("new-tag-input")! as HTMLInputElement;
+  const confirmBtn = document.getElementById("create-new-tag-button")! as HTMLButtonElement;
+  const formFeedbackText = document.getElementById("new-tag-form-feedback")! as HTMLParagraphElement;
+
+  // "Show the dialog" button opens the <dialog> modally
+  showDialogButton.addEventListener("click", () => {
+    newTagDialog.showModal();
+  });
+
+  // text input sets the value of the submit button
+  textInputElement.addEventListener("change", (e) => {
+    confirmBtn.value = textInputElement.value;
+  });
+
+  // this is where the tag name actually gets submitted from the dialog
+  newTagDialog.addEventListener("close", (e) => {
+    if (isStringBlank(newTagDialog.returnValue)) {
+      return;
+    }
+
+    // TODO add a color picker so people can pick a color for their tag
+    const newTagId = createNewTag({ name: newTagDialog.returnValue, color: randomHex() });
+    document.location.href = "/tag-viewer/" + newTagId;
+
+  });
+
+  // https://stackoverflow.com/a/3261380
+  function isStringBlank(str: string) {
+    return !str || /^\s*$/.test(str);
+  }
+
+  function formCheck() {
+    formFeedbackText.textContent = "";
+    if (isStringBlank(textInputElement.value)) {
+      formFeedbackText.textContent = "Please enter a tag name";
+      return;
+    }
+
+    if (getTagByName(textInputElement.value)) {
+      formFeedbackText.textContent = "Tag already exists.";
+      return;
+    }
+
+    newTagDialog.close(textInputElement.value);
+    textInputElement.value = "";
+  }
+
+  // submit form if the user presses enter while theyre focused on the text input
+  textInputElement.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      confirmBtn.click();
+    }
+  });
+
+  // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
+  confirmBtn.addEventListener("click", (event) => {
+    event.preventDefault(); // We don't want to submit this fake form
+    formCheck();
+  });
+</script>
