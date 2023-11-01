@@ -12,16 +12,16 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   const error = url.searchParams.get("error");
 
   if (!spotifyVerifier) {
-    return redirect("/signin?error=no_verifier");
+    return redirect("/?error=no_verifier");
   }
   if (!userState || !state || state !== userState.value) {
-    return redirect("/signin?error=state_mismatch");
+    return redirect("/?error=state_mismatch");
   }
   if (!authCode) {
-    return redirect("/signin?error=no_code");
+    return redirect("/?error=no_code");
   }
   if (error) {
-    return redirect("/signin?error=" + error);
+    return redirect("/?error=" + error);
   }
 
   console.log("GRABBING TOKEN");
@@ -30,7 +30,7 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   params.append("client_id", import.meta.env.SPOTIFY_CLIENT_ID);
   params.append("grant_type", "authorization_code");
   params.append("code", authCode);
-  params.append("redirect_uri", "http://localhost:4321/api/spotify/callback");
+  params.append("redirect_uri", "http://melokey.vercel.app/api/spotify/callback");
   params.append("code_verifier", spotifyVerifier.value);
 
   const result = await fetch("https://accounts.spotify.com/api/token", {
@@ -42,7 +42,7 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   console.log("GRABBING TOKEN RESULT");
 
   if (!result.ok) {
-    return redirect("/signin?error=token_error");
+    return redirect("/?error=token_error");
   }
 
   console.log("GRABBING TOKEN RESULT OK");
