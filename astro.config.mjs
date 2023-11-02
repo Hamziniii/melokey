@@ -5,9 +5,15 @@ import nodejs from "@astrojs/node";
 
 import vercel from "@astrojs/vercel/serverless";
 
+const isVercel = import.meta.env.DEPLOYMENT === "PRODUCTION"
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [react(), tailwind()],
   output: "server",
-  adapter: vercel(),
+  adapter: isVercel ? 
+    vercel() :
+    nodejs({
+      "mode": "standalone"
+    }),
 });

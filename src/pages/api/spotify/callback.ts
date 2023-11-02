@@ -3,7 +3,7 @@ import type { APIRoute } from "astro";
 export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   console.log("GRABBING CALLBACK");
   const url = new URL(request.url);
-  console.log(request.url);
+
   const spotifyVerifier = cookies.get("spotify_verifier");
   const userState = cookies.get("spotify_auth_state");
 
@@ -32,7 +32,7 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   params.append("code", authCode);
   params.append(
     "redirect_uri",
-    "https://melokey.vercel.app/api/spotify/callback",
+    `${url.origin}/api/spotify/callback`,
   );
   params.append("code_verifier", spotifyVerifier.value);
 
@@ -45,6 +45,7 @@ export const GET: APIRoute = async ({ redirect, cookies, request }) => {
   console.log("GRABBING TOKEN RESULT");
 
   if (!result.ok) {
+    console.log(result.status, result.statusText)
     return redirect("/?error=token_error");
   }
 
