@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro'
 import Library from '../components/library/Library'
 import Modal from '../components/modal/Modal'
+import ToastHandler from '../components/toast/ToastHandler'
 import ExposeSdkProps from '../globals/ExposeSdkProps'
 import type { Locals } from '../middleware';
 
@@ -51,5 +52,6 @@ const timeLeft = expires_in ? Math.max(parseInt(expires_in) - (new Date()).getTi
     }, timeLeft);
   </script>
   <Modal client:only />
+  <ToastHandler client:only />
   <ExposeSdkProps sdkProps={sdkProps} client:only />
 </BaseLayout>

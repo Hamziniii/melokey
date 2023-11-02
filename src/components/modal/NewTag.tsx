@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { createNewTag, randomHex } from "../../common-client/tagManagement"
 import { closeModal } from "./store"
+import ToastHandler from "../toast/ToastHandler"
+import { addToast } from "../toast/store"
 
 export default function NewTag() {
     const [color, setColor] = useState<string>(randomHex())
@@ -23,7 +25,13 @@ export default function NewTag() {
 
       const name = (document.getElementById("name") as HTMLInputElement).value
       const color = (document.getElementById("hex_code") as HTMLInputElement).value
-      createNewTag({name, color})
+    
+      try {
+        createNewTag({name, color})
+      } catch(e) {
+        addToast({type: "error", title: "Failed to create tag!", message: "" + e})
+        return
+      }
       
       // TODO - make the home page tags update normally instead of reloading
       document.location.reload() // nanostore resets anyways
