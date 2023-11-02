@@ -3,9 +3,12 @@ import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import nodejs from "@astrojs/node";
 
+import dotenv from "dotenv"
+dotenv.config()
+
 import vercel from "@astrojs/vercel/serverless";
 
-const isVercel = import.meta.env.DEPLOYMENT === "PRODUCTION"
+const isVercel = process.env.DEPLOYMENT == "PRODUCTION"
 
 // https://astro.build/config
 export default defineConfig({
