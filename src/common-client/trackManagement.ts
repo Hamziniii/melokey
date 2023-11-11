@@ -51,13 +51,17 @@ export function removeTrackFromTagList(trackData: Track, tagId: string) {
   }
 
   // remove song uri from tag's specific list
-  const tagTracks = getTracksForTag(tagId).filter((track) => track !== trackData.id);
+  const tagTracks = getTracksForTag(tagId).filter(
+    (track) => track !== trackData.id,
+  );
   setTracksForTag(tagId, tagTracks);
 }
 
 export function getTagsByTrackId(trackId: string): Array<Tag> {
   const allTags = getTagList();
-  const tags = allTags.filter(tag => JSON.parse(localStorage.getItem("tag-" + tag.id) ?? "[]").includes(trackId));
+  const tags = allTags.filter((tag) =>
+    JSON.parse(localStorage.getItem("tag-" + tag.id) ?? "[]").includes(trackId),
+  );
 
   return tags;
 }

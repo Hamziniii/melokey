@@ -14,8 +14,8 @@ const sdkProps = (Astro.locals as Locals).sdkProps;
 <UserLayout title="Currently Playing">
   <CurrPlay sdkProps={sdkProps} client:load />
   <div class="flex flex-col gap-2 w-64 flex-shrink-0">
-    <NewTagButton />
-    <DebugButton />
+    <!-- <NewTagButton />
+    <DebugButton /> -->
     <TagPane client:load />
     <Queue client:load />
   </div>
