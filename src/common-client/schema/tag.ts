@@ -1,12 +1,12 @@
 // Schema for Tag
 
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, type ObjectId } from "mongoose";
 
 export interface ITag extends Document {
   name: string, 
   color: string,
   description?: string,
-  trackIds: string[], // Song Ids 
+  tracks: ObjectId[], // Song Ids 
 }
 
 const TagSchema = new Schema<ITag>({
@@ -22,8 +22,9 @@ const TagSchema = new Schema<ITag>({
     type: String,
     required: false,
   },
-  trackIds: {
-    type: [String],
+  tracks: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Track',
     required: true,
   }
 })

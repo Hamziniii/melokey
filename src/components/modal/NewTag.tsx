@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { createNewTag, randomHex } from "../../common-client/tagManagement"
-import { closeModal } from "./store"
-import ToastHandler from "../toast/ToastHandler"
 import { addToast } from "../toast/store"
+import React from "react"
 
 export default function NewTag() {
     const [color, setColor] = useState<string>(randomHex())

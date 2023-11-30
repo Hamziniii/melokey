@@ -1,20 +1,30 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { CompositionModel, type IComposition } from "./composition";
-import { TagModel, type ITag } from "./tag";
+import mongoose, { Schema, Document, type ObjectId } from "mongoose";
 
 export interface IUser extends Document {
-  compositions: IComposition[],
-  tags: ITag[],
+  email: string,
+  displayName: string,
+  compositions: ObjectId[],
+  tags: ObjectId[],
 }
 const UserSchema = new Schema<IUser>({
+  email: {
+    type: String,
+    required: true,
+  },
+  displayName: {
+    type: String,
+    required: true,
+  },
   compositions: {
-    type: [CompositionModel.schema],
+    type: [Schema.Types.ObjectId],
+    ref: 'Composition',
     required: true,
   },
   tags: {
-    type: [TagModel.schema],
+    type: [Schema.Types.ObjectId],
+    ref: 'Tag',
     required: true,
   }
 })
 
-export default mongoose.model<IUser>('User', UserSchema)
+export const UserModel = mongoose.model<IUser>('User', UserSchema)

@@ -4,7 +4,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITrack extends Document {
   trackId: string,
-  name: string,
+  name?: string,
   audio_features?: {
     acousticness: number,
     danceability: number,
@@ -24,7 +24,7 @@ const TrackSchema = new Schema<ITrack>({
   },
   name: {
     type: String,
-    required: true,
+    required: false,
   },
   audio_features: {
     type: {
@@ -41,4 +41,4 @@ const TrackSchema = new Schema<ITrack>({
   }
 })
 
-export default mongoose.model<ITrack>('Track', TrackSchema)
+export const TrackModel = mongoose.model<ITrack>('Track', TrackSchema)

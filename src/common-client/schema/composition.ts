@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // Schema for Composition
 
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, type ObjectId } from "mongoose";
 
 export enum Operation {
   Union = "+", 
@@ -13,7 +13,7 @@ export enum Operation {
 // ((Sad + Happy) ^ Angry)
 type TagExpression = {
   type: "TagId",
-  value: string,
+  value: ObjectId,
 }
 
 type OperationExpression = {
@@ -31,23 +31,9 @@ export function ExpressionIsOperation(expression: IExpression): expression is Op
   return expression.type === "Operation"
 }
 
-const ExpressionSchema = new Schema<IExpression>({
-  type: {
-    type: String,
-    enum: ["TagId", "Operation"],
-    required: true,
-  },
-  value: {
-    type: String,
-    required: true,
-  }
-})
-
-export const ExpressionModel = mongoose.model<IExpression>('Expression', ExpressionSchema)
-
 export interface IComposition extends Document {
   name: string,
-  expression: IExpression[],
+  expressions: IExpression[],
 }
 
 const CompositionSchema = new Schema<IComposition>({
@@ -55,8 +41,18 @@ const CompositionSchema = new Schema<IComposition>({
     type: String,
     required: true,
   },
-  expression: {
-    type: [ExpressionSchema],
+  expressions: {
+    type: [{
+      type: {
+        type: String,
+        enum: ["TagId", "Operation"],
+        required: true,
+      },
+      value: {
+        type: String,
+        required: true,
+      }
+    }],
     required: true,
   }
 })

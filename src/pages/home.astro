@@ -5,6 +5,7 @@ import Tags, { NewTag } from "../components/home/Tags";
 import type { Locals } from "../middleware";
 import Playlists from "../components/home/Playlists";
 import Compositions, { NewComposition } from "../components/home/Composition";
+import { findOrCreateUser } from "../common-client/management/user";
 
 const time = new Date().getHours();
 const greeting = time < 12 ? "Morning" : time < 18 ? "Afternoon" : "Evening";
@@ -15,6 +16,8 @@ const playlistCount = parseInt(Astro.cookies.get("playlistCount")?.value ?? "") 
 const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token)
 
 const user = await sdk.currentUser.profile()
+Astro.cookies.set("user", JSON.stringify({email: user.email, display_name: user.display_name}), { path: "/" })
+const dbUser = findOrCreateUser(user.email, user.display_name)
 const name = user.display_name
 // const playlists: SimplifiedPlaylist[] = (await sdk.currentUser.playlists.playlists(10)).items
 ---
