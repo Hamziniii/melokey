@@ -1,0 +1,13 @@
+// Schema for REPLACE
+
+import mongoose, { Schema, Document } from "mongoose";
+
+export interface IREPLACE extends Document {
+  
+}
+
+const REPLACESchema = new Schema<IREPLACE>({
+
+})
+
+export default mongoose.model<IREPLACE>('REPLACE', REPLACESchema)
