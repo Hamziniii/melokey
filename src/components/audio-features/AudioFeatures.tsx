@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { sdkPropsAtom } from "../../globals/store";
+import { useStore } from "@nanostores/react";
+import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
 const EnergyIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="20" height="20" fill="currentColor">
@@ -53,6 +56,8 @@ function HoverableFeature({ icon, value, message }: { icon: JSX.Element; value: 
 }
 
 export default function AudioFeatures({ trackIds }: { trackIds: string[] }) {
+  const sdkProps = useStore(sdkPropsAtom);
+  
   // const [acousticness, setAcousticness] = useState<number>(0);
   const [danceability, setDanceability] = useState<number>(0);
   const [energy, setEnergy] = useState<number>(0);
@@ -62,7 +67,45 @@ export default function AudioFeatures({ trackIds }: { trackIds: string[] }) {
   const [speechiness, setSpeechiness] = useState<number>(0);
   const [valence, setValence] = useState<number>(0);
 
-  console.log(trackIds);
+  useEffect(() => {
+    if(!sdkProps) return;
+
+    const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
+    if(trackIds.length === 0) return;
+
+    trackIds = trackIds.slice(0, 100);
+
+    sdk.tracks.audioFeatures(trackIds).then((features) => {
+      if(features.length === 0) return;
+      
+      const data = {
+        danceability: 0,
+        energy: 0,
+        instrumentalness: 0,
+        loudness: 0,
+        speechiness: 0,
+        valence: 0,
+      }
+
+      features.forEach((feature) => {
+        for(const key in data) {
+            (data as any)[key] += (feature as any)[key];
+        }
+      })
+
+      for(const key in data) {
+        (data as any)[key] = ((data as any)[key] / features.length).toFixed(2);
+      }
+
+      setDanceability(data.danceability);
+      setEnergy(data.energy);
+      setInstrumentalness(data.instrumentalness);
+      setLoudness(data.loudness);
+      setSpeechiness(data.speechiness);
+      setValence(data.valence);
+    })
+  }, [trackIds])
+
   return (
     <>
       <section className="flex gap-3">

@@ -130,7 +130,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
     <div id="playlist-main" className="relative flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
       {/* <style>{jankyCSS}</style> */}
       <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
-        <AudioFeatures trackIds={[]} />
+        <AudioFeatures trackIds={tracks?.map(t => t.id)} />
       </div>
 
       <div className="mt-16 flex flex-row pb-4">
