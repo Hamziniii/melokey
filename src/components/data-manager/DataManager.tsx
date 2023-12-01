@@ -1,93 +1,95 @@
 // import {  } from "../../common-client/management/combinedClient"
 import { useEffect, useState } from "react";
 import { fromBlob } from "../../common-client/management/combinedClient";
-import { getEmail } from "../../globals/util"
+import { getEmail } from "../../globals/util";
 import { addToast } from "../toast/store";
 
 export function DataManager() {
-  const [lastDownload, setLastDownload] = useState<Date | null>(null)
-  const [lastUpload, setLastUpload] = useState<Date | null>(null)
+  const [lastDownload, setLastDownload] = useState<Date | null>(null);
+  const [lastUpload, setLastUpload] = useState<Date | null>(null);
 
   function getLastDownload() {
-    localStorage.getItem("lastDownload") && setLastDownload(new Date(localStorage.getItem("lastDownload")!))
+    localStorage.getItem("lastDownload") && setLastDownload(new Date(localStorage.getItem("lastDownload")!));
   }
 
   function getLastUpload() {
-    const email = getEmail()
+    const email = getEmail();
     const requestOptions: RequestInit = {
-      method: 'GET',
-      redirect: 'follow'
+      method: "GET",
+      redirect: "follow",
     };
-    
+
     fetch("http://localhost:4321/api/mongo/timestamp?email=" + email, requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        if(result.length === 0) {
-          setLastUpload(null)
-          return
+      .then((response) => response.text())
+      .then((result) => {
+        if (result.length === 0) {
+          setLastUpload(null);
+          return;
         }
 
-        setLastUpload(new Date(result))
+        setLastUpload(new Date(result));
       })
-      .catch(error => console.log('error', error));
+      .catch((error) => console.log("error", error));
   }
 
   useEffect(() => {
-    getLastDownload()
-    getLastUpload()
-  }, [])
+    getLastDownload();
+    getLastUpload();
+  }, []);
 
   function download() {
     // TODO - download data
-    const email = getEmail()
+    const email = getEmail();
     const requestOptions: RequestInit = {
-      method: 'GET',
-      redirect: 'follow'
+      method: "GET",
+      redirect: "follow",
     };
-    
+
     fetch("http://localhost:4321/api/mongo/combined?email=" + email, requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        if(result.length === 0) {
-          addToast({type: "error", title: "No Data!", message: "There is no data associated with this account!"})
-          return
+      .then((response) => response.text())
+      .then((result) => {
+        if (result.length === 0) {
+          addToast({ type: "error", title: "No Data!", message: "There is no data associated with this account!" });
+          return;
         }
 
-        addToast({type: "success", title: "Downloaded Data!", message: "Downloaded data from the cloud!"})
-        fromBlob(result)
-        getLastDownload()
+        addToast({ type: "success", title: "Downloaded Data!", message: "Downloaded data from the cloud!" });
+        fromBlob(result);
+        getLastDownload();
       })
-      .catch(error => console.log('error', error));
+      .catch((error) => console.log("error", error));
   }
   function upload() {
-    const email = getEmail()
+    const email = getEmail();
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    
+
     const raw = JSON.stringify({
-      "email": email,
-      "blob": localStorage
+      email: email,
+      blob: localStorage,
     });
-    
+
     const requestOptions: RequestInit = {
-      method: 'POST',
+      method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: 'follow'
+      redirect: "follow",
     };
-    
-    fetch("http://localhost:4321/api/mongo/combined", requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        if(result == "Uploaded")
-          addToast({type: "success", title: "Uploaded Data!", message: "Uploaded data to the cloud!"})
-        else
-          addToast({type: "error", title: "Failed to Upload!", message: "Failed to upload data to the cloud!"})
-      })
-      .catch(error => console.log('error', error));
 
-    console.log("Uploading data")
+    fetch("http://localhost:4321/api/mongo/combined", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        if (result == "Uploaded") {
+          addToast({ type: "success", title: "Uploaded Data!", message: "Uploaded data to the cloud!" });
+          setLastUpload(new Date());
+        } else {
+          addToast({ type: "error", title: "Failed to Upload!", message: "Failed to upload data to the cloud!" });
+        }
+      })
+      .catch((error) => console.log("error", error));
+
+    console.log("Uploading data");
     // console.log(blob, email)
   }
 
@@ -114,5 +116,5 @@ export function DataManager() {
         </div>
       </div>
     </div>
-  )
+  );
 }
