@@ -7,6 +7,7 @@ import { TrackRowItem } from "../playlist/Playlist";
 import DeleteComposition from "../modal/DeleteComposition";
 import { openModal } from "../modal/store";
 import EditComposition from "../modal/EditComposition";
+import AudioFeatures from "../audio-features/AudioFeatures";
 
 function msToTime(duration: number) {
   const milliseconds = Math.floor((duration % 1000) / 100),
@@ -126,8 +127,12 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
   }
 
   return (
-    <div id="playlist-main" className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
+    <div id="playlist-main" className="relative flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
       {/* <style>{jankyCSS}</style> */}
+      <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
+        <AudioFeatures trackIds={[]} />
+      </div>
+
       <div className="mt-16 flex flex-row pb-4">
         <div className="self-center flex-shrink-0 w-56 h-56 min-w-56 min-h-56 rounded-md bg-gray-900 text-gray-500">
           {image ? <img id="playlist-img" crossOrigin="anonymous" src={image} className="w-56 h-56 rounded-md" /> : <div className="text-6xl">no image</div>}
