@@ -1,0 +1,7 @@
+---
+import UserLayout from "../layouts/UserLayout.astro";
+import { DataManager as DM } from "../components/data-manager/DataManager.tsx";
+---
+<UserLayout title="Home">
+  <DM client:load>
+</UserLayout>
