@@ -1,21 +1,14 @@
-import {
-  SpotifyApi,
-  type SimplifiedPlaylist,
-  type PlaylistedTrack,
-  type Page,
-  type Track,
-} from "@spotify/web-api-ts-sdk";
+import { SpotifyApi, type SimplifiedPlaylist, type PlaylistedTrack, type Page, type Track } from "@spotify/web-api-ts-sdk";
 import { useEffect, useState } from "react";
 import type { SdkProps } from "../../middleware";
 import { FastAverageColor } from "fast-average-color";
-import {
-  getCompositionById,
-  getTracksThatShareTags,
-  type Composition,
-} from "../../common-client/compositionsManagement";
+import { getCompositionById, getTracksThatShareTags, type Composition, resolveComposition } from "../../common-client/compositionsManagement";
 import { TrackRowItem } from "../playlist/Playlist";
 import DeleteComposition from "../modal/DeleteComposition";
 import { openModal } from "../modal/store";
+import EditComposition from "../modal/EditComposition";
+import AudioFeatures from "../audio-features/AudioFeatures";
+import { getTagById } from "../../common-client/tagManagement";
 
 function msToTime(duration: number) {
   const milliseconds = Math.floor((duration % 1000) / 100),
@@ -43,25 +36,16 @@ table::before {
 }
 `;
 
-export default function Composition({
-  sdkProps,
-  compositionId,
-}: {
-  sdkProps: SdkProps;
-  compositionId: string;
-}) {
+export default function Composition({ sdkProps, compositionId }: { sdkProps: SdkProps; compositionId: string }) {
   const [isPageReady, setIsPageReady] = useState<boolean>(false);
   const [sdk, setSdk] = useState<SpotifyApi | null>(null);
   const [playlist, setPlaylist] = useState<SimplifiedPlaylist | null>(null);
   const [image, setImage] = useState<string | null>(null);
-  const [trackPage, setTrackPage] = useState<Page<PlaylistedTrack> | null>(
-    null,
-  );
+  const [trackPage, setTrackPage] = useState<Page<PlaylistedTrack> | null>(null);
   const [tracks, setTracks] = useState<Track[]>([]);
   const [color, setColor] = useState<string | null>(null);
-  const [compositionData, setCompositionData] = useState<
-    Composition | null | undefined
-  >(null);
+  const [compositionData, setCompositionData] = useState<Composition | null | undefined>(null);
+  const [tagNames, setTagNames] = useState<string[]>([]);
 
   useEffect(() => {
     if (image) {
@@ -70,9 +54,7 @@ export default function Composition({
         .getColorAsync(image)
         .then((color) => {
           setColor(color.hex);
-          document
-            .getElementById("playlist-main")
-            ?.style.setProperty("--tw-gradient-from", color.hex);
+          document.getElementById("playlist-main")?.style.setProperty("--tw-gradient-from", color.hex);
         })
         .catch((e) => {
           console.log(e);
@@ -83,21 +65,34 @@ export default function Composition({
   useEffect(() => {
     // grab composition data
     const composition = getCompositionById(compositionId);
+    console.log("==== GOT COMPOSITION", composition);
     setCompositionData(composition);
 
     if (!composition) {
       return setIsPageReady(true);
     }
 
-    const trackList = getTracksThatShareTags(composition.tags);
+    const names = composition.tags.reduce((acc, tagId) => {
+      const tag = getTagById(tagId);
+      if (tag) acc.push(tag.name);
+      return acc;
+    }, [] as string[]);
+
+    setTagNames(names);
+
+    const trackList = resolveComposition(composition.id);
     const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
     setSdk(_sdk);
 
-    if (trackList.length > 0)
+    if (trackList.length > 0) {
       _sdk.tracks.get(trackList).then((tracks) => {
         setTracks(tracks);
         setIsPageReady(true);
       });
+    } else {
+      // page is ready, but there are no tracks
+      setIsPageReady(true);
+    }
   }, []);
 
   if (!isPageReady) {
@@ -127,28 +122,30 @@ export default function Composition({
   // }
 
   function deleteComposition() {
+    if (compositionData) openModal(<DeleteComposition composition={compositionData} />);
+  }
+
+  function editComposition() {
     if (compositionData)
-      openModal(<DeleteComposition composition={compositionData} />);
+      openModal(<EditComposition composition={compositionData} />, () => {
+        // const _composition = getCompositionById(compositionId);
+        // if (_composition) setCompositionData(_composition);
+
+        // reload the page to make the sdk get the new tracks from the new tags
+        document.location.reload();
+      });
   }
 
   return (
-    <div
-      id="playlist-main"
-      className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900"
-    >
+    <div id="playlist-main" className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
       {/* <style>{jankyCSS}</style> */}
+      {/* <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
+        <AudioFeatures trackIds={tracks?.map(t => t.id)} />
+      </div> */}
+
       <div className="mt-16 flex flex-row pb-4">
         <div className="self-center flex-shrink-0 w-56 h-56 min-w-56 min-h-56 rounded-md bg-gray-900 text-gray-500">
-          {image ? (
-            <img
-              id="playlist-img"
-              crossOrigin="anonymous"
-              src={image}
-              className="w-56 h-56 rounded-md"
-            />
-          ) : (
-            <div className="text-6xl">no image</div>
-          )}
+          {image ? <img id="playlist-img" crossOrigin="anonymous" src={image} className="w-56 h-56 rounded-md" /> : <div className="text-6xl">no image</div>}
         </div>
         <div className="flex flex-col-reverse ml-4 pb-2">
           <div className="flex flex-row gap-2">
@@ -162,14 +159,9 @@ export default function Composition({
                 </button> */}
               </>
             ) : (
-              <p className="text-sm font-thin pl-[.4em] mr-2">
-                {tracks.length} Songs
-              </p>
+              <p className="text-sm font-thin pl-[.4em] mr-2">{tracks.length} Songs</p>
             )}
-            <button
-              onClick={addSongsToQueue}
-              className="mr-auto underline text-sm font-thin text-gray-300 transition-colors duration-150 ease-in-out hover:text-white"
-            >
+            <button onClick={addSongsToQueue} className=" underline text-sm font-thin text-gray-300 transition-colors duration-150 ease-in-out hover:text-white">
               Add to Queue
             </button>
             <button
@@ -178,7 +170,20 @@ export default function Composition({
             >
               Delete Composition
             </button>
+            <button
+              className="text-sm font-thin text-gray-400 underline transition-colors ease-in-out duration-150 cursor-pointer select-none hover:text-white"
+              onClick={editComposition}
+            >
+              Edit Composition
+            </button>
           </div>
+          <div className="my-3 pl-1">
+            <AudioFeatures trackIds={tracks?.map((t) => t.id)} />
+          </div>
+          <p className="text-sm pl-1 font-thin text-gray-200">
+            {compositionData?.type == "union" ? "Union" : "Intersection"} of {tagNames.join(", ")}
+          </p>
+          <p className="text-sm pl-1 font-thin text-gray-200">{compositionData?.description}</p>
           <h2 className="text-5xl pt-1 text-white">{compositionData?.name}</h2>
           <p className="text-sm pl-1 font-thin text-gray-200">Composition</p>
         </div>
@@ -187,26 +192,16 @@ export default function Composition({
         <table className="w-full table relative">
           <thead>
             <tr className="sticky top-0 backdrop-blur-lg pt-4">
-              <th className="text-left text-sm font-thin text-gray-300 m-4 py-4">
-                Title
-              </th>
-              <th className="text-left text-sm font-thin text-gray-300">
-                Album
-              </th>
-              <th className="text-left text-sm font-thin text-gray-300">
-                Tags
-              </th>
-              <th className="text-left text-sm font-thin text-gray-300">
-                Duration
-              </th>
+              <th className="text-left text-sm font-thin text-gray-300 m-4 py-4">Title</th>
+              <th className="text-left text-sm font-thin text-gray-300">Album</th>
+              <th className="text-left text-sm font-thin text-gray-300">Tags</th>
+              <th className="text-left text-sm font-thin text-gray-300">Duration</th>
             </tr>
           </thead>
           <tbody>
             {tracks.map((track, index) => {
               // TODO - make sure that this updates if the user removes the tag from the track
-              return (
-                <TrackRowItem key={"" + track?.id + index} track={track} />
-              );
+              return <TrackRowItem key={"" + track?.id + index} track={track} />;
             })}
           </tbody>
         </table>

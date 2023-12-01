@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createComposition } from "../../common-client/compositionsManagement";
 import { closeModal } from "./store";
+import { addToast } from "../toast/store";
+
 import {
   getTagListWithData,
   type Tag,
@@ -26,7 +28,19 @@ export default function NewComposition() {
       document.getElementById("comp-desc") as HTMLInputElement
     ).value;
     const tags = trackTags.map((t) => t.id);
-    createComposition({ name, description, tags });
+    const type = (document.getElementById("type") as HTMLSelectElement)?.value as "union" | "intersection";
+
+    if(tags.length === 0) {
+      addToast({type: "error", title: "Not enough tags!", message: "Please add at least one tag to your composition!"})
+      return
+    }
+  
+    if(name.length === 0) {
+      addToast({type: "error", title: "No Name!", message: "Please add a name for your composition!"})
+      return
+    }
+
+    createComposition({ name, description, tags, type });
 
     // TODO - make the home page tags update normally instead of reloading
     document.location.reload(); // nanostore resets anyways
@@ -47,7 +61,7 @@ export default function NewComposition() {
         <div className="flex flex-col">
           <h1 className="text-2xl text-white">New Composition</h1>
           <p className="text-sm text-gray-400 font-thin">
-            Create a playlist based off your tags!
+            Create a playlist based off your tags!<br/>Uses operations intersect (logical AND) or union (logical OR)
           </p>
         </div>
       </div>
@@ -60,13 +74,19 @@ export default function NewComposition() {
           autoComplete="off"
         />
 
-        <label className="text-sm text-gray-400 font-thin">Description</label>
+        <label className="text-sm text-gray-400 font-thin pt-2">Description</label>
         <input
           id="comp-desc"
           className="bg-zinc-800 rounded-lg p-2 text-white"
           required
           autoComplete="off"
         />
+
+        <label className="text-sm text-gray-400 font-thin pt-2">Type</label>
+        <select id="type" className="block w-full p-2.5 bg-zinc-800 placeholder-gray-400 text-white rounded-lg">
+          <option value="union">Union</option>
+          <option value="intersection" selected>Intersection</option>
+        </select>
 
         <div
           className="flex flex-row gap-2 mt-4 overflow-hidden"
@@ -107,7 +127,7 @@ export default function NewComposition() {
                     No tags
                   </p>
                   <p className="text-zinc-300 text-xs overflow-ellipsis overflow-hidden whitespace-nowrap font-thin">
-                    Maybe you should add some tags 👀
+                    Maybe you should <br/> add some tags 👀
                   </p>
                 </>
               )}
@@ -152,7 +172,7 @@ export default function NewComposition() {
                     No tags
                   </p>
                   <p className="text-zinc-300 text-xs overflow-ellipsis overflow-hidden whitespace-nowrap font-thin">
-                    Maybe you should create some tags 👀
+                    Maybe you should create <br/> some tags 👀
                   </p>
                 </>
               )}

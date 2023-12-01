@@ -95,9 +95,28 @@ export function TrackRowItem({ track }: { track: Track }) {
             );
           })}
           {tags.length > tagMax && (
-            <span className="inline-block rounded-full px-3 py-1 text-sm text-white mr-2 mb-2 bg-gradient-to-b from-slate-600">
-              +{tags.length - tagMax}
-            </span>
+            <div className="group relative w-max">
+              <span className="inline-block rounded-full px-3 py-1 text-sm text-white mr-2 mb-2 bg-gradient-to-b from-slate-600">
+                +{tags.length - tagMax}
+              </span>
+              <div className="pointer-events-none absolute top-8 left-0 w-max opacity-0 transition-opacity group-hover:opacity-100 bg-zinc-900 bg-opacity-10 backdrop-blur-md p-3 rounded-3xl z-30">
+                {
+                  tags.slice(tagMax).map((tag) => {
+                    return (
+                      <span
+                        key={tag.id}
+                        className="inline-block rounded-full px-3 py-1 text-sm text-white mx-1 my-1 bg-gradient-to-b from-slate-600"
+                        style={
+                          { "--tw-gradient-from": tag?.color } as React.CSSProperties
+                        }
+                      >
+                        {tag.name}
+                      </span>
+                    );
+                  })
+                }
+              </div>
+            </div>
           )}
         </div>
       </td>

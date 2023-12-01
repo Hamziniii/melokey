@@ -15,6 +15,7 @@ export type Locals = App.Locals & {
 
 export const onRequest = defineMiddleware(
   async ({ cookies, redirect, url, locals }, next) => {
+    if (url.pathname.startsWith("/api")) return next();
     if (blacklist.includes(url.pathname)) return next();
 
     const spotifyAccessToken = cookies.get("spotify_access_token")?.value;

@@ -1,15 +1,12 @@
 import { SpotifyApi, type Track } from "@spotify/web-api-ts-sdk";
 import { useEffect, useState } from "react";
 import type { SdkProps } from "../../middleware";
-import {
-  getTagWithData,
-  type Tag,
-  type TagWithTracks,
-} from "../../common-client/tagManagement";
+import { getTagWithData, type Tag, type TagWithTracks } from "../../common-client/tagManagement";
 import { TrackRowItem } from "../playlist/Playlist";
 import { openModal } from "../modal/store";
 import DeleteTag from "../modal/DeleteTag";
 import EditTag from "../modal/EditTag";
+import AudioFeatures from "../audio-features/AudioFeatures";
 
 function partitionToChunks<T>(array: T[], chunkSize: number) {
   const results = [];
@@ -21,13 +18,7 @@ function partitionToChunks<T>(array: T[], chunkSize: number) {
 
 type IdToTrack = Record<string, Track | null>;
 
-export default function Tag({
-  sdkProps,
-  tagId,
-}: {
-  sdkProps: SdkProps;
-  tagId: string;
-}) {
+export default function Tag({ sdkProps, tagId }: { sdkProps: SdkProps; tagId: string }) {
   const [trackMap, setTrackMap] = useState<IdToTrack>({});
   const [tag, setTag] = useState<TagWithTracks | null>(null);
   const [trackCount, setTrackCount] = useState<number>(0);
@@ -83,21 +74,21 @@ export default function Tag({
   }
 
   useEffect(() => {
-    setTrackEntries(
-      Object.values(trackMap).filter((track) => track !== null) as Track[],
-    );
+    setTrackEntries(Object.values(trackMap).filter((track) => track !== null) as Track[]);
   }, [trackMap]);
 
   return (
-    <div
-      id="playlist-main"
-      className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900"
-    >
+    <div id="playlist-main" className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
+      {/* <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
+        <AudioFeatures trackIds={trackEntries?.map(t => t.id)} />
+      </div> */}
+
       <div className="mt-16 flex flex-row pb-4">
         <div
           className="self-center flex-shrink-0 w-32 h-32 min-w-56 min-h-56 rounded-md bg-gradient-to-b from-slate-600 to-bg-zinc-800"
           style={{ "--tw-gradient-from": tag?.color } as React.CSSProperties}
         ></div>
+
         <div className="flex flex-col-reverse ml-4 pb-2">
           <div className="flex flex-row gap-2">
             <p className="text-sm font-thin pl-[.2em]">{trackCount} Songs</p>
@@ -120,6 +111,9 @@ export default function Tag({
               Edit Tag
             </button>
           </div>
+          <div className="my-1 pl-1">
+            <AudioFeatures trackIds={trackEntries?.map((t) => t.id)} />
+          </div>
           <h2 className="text-5xl pt-1 text-white">{tag?.name}</h2>
           <p className="text-sm pl-[.1em] font-thin text-gray-200">Tag</p>
         </div>
@@ -128,22 +122,12 @@ export default function Tag({
         <table className="w-full table relative">
           <thead>
             <tr className="sticky top-0 backdrop-blur-lg pt-4">
-              <th className="text-left text-sm font-thin text-gray-300 m-4 py-4">
-                Title
-              </th>
-              <th className="text-left text-sm font-thin text-gray-300">
-                Album
-              </th>
-              <th className="text-left text-sm font-thin text-gray-300">
-                Duration
-              </th>
+              <th className="text-left text-sm font-thin text-gray-300 m-4 py-4">Title</th>
+              <th className="text-left text-sm font-thin text-gray-300">Album</th>
+              <th className="text-left text-sm font-thin text-gray-300">Duration</th>
             </tr>
           </thead>
-          <tbody>
-            {trackEntries.map((track) =>
-              track ? <TrackRowItem key={track.id} track={track} /> : null,
-            )}
-          </tbody>
+          <tbody>{trackEntries.map((track) => (track ? <TrackRowItem key={track.id} track={track} /> : null))}</tbody>
         </table>
       </div>
     </div>

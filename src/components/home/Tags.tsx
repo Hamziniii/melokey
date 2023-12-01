@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import {
   createTagPlaceholders,
-  getTagList,
   getTagListWithData,
-  type Tag,
   type TagWithTracks,
 } from "../../common-client/tagManagement";
 import Cookies from "js-cookie";
 import { openModal } from "../modal/store";
 import NewTagModal from "../modal/NewTag";
+import React from "react";
 
 export function NewTag() {
   function click() {

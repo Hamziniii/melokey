@@ -5,6 +5,7 @@ export type CompositionBase = {
   name: string;
   description: string;
   tags: Array<Tag["id"]>;
+  type?: "union" | "intersection";
 };
 
 export type Composition = CompositionBase & {
@@ -25,6 +26,7 @@ export function createComposition({
   name,
   description,
   tags,
+  type = "intersection",
 }: CompositionBase) {
   const compositionList = getCompositionList();
 
@@ -42,6 +44,7 @@ export function createComposition({
     name,
     description,
     tags,
+    type,
   };
 
   compositionList.push(newComposition);
@@ -69,12 +72,47 @@ export function getTracksThatShareTags(
   });
 
   // O(m) where m is the number of tracks
-  const tracks = Array.from(trackOccurences.entries()) //
+  let tracks = Array.from(trackOccurences.entries()) //
     // Remove filter if we want to do OR set operation instead of AND set operation
     .filter(([, occurences]) => occurences === tags.length)
     .map(([track]) => track);
 
   return tracks;
+}
+
+export function resolveComposition(id: string): Array<Track["id"]> {
+  const composition = getCompositionById(id);
+  if(!composition) {
+    throw new Error("Composition " + id + " doesn't exist!");
+  }
+
+  const tagListWithData = getTagListWithData();
+  const dataByTag = tagListWithData.reduce((acc, tag) => {
+    acc[tag.id] = tag.tracks;
+    return acc;
+  }, {} as Record<Tag["id"], Track["id"][]>);
+
+  const tags = composition.tags;
+  const type = composition.type;
+
+  const trackOccurences = new Map<Track["id"], number>();
+  
+  tags.forEach((tagId) => {
+    if(tagId in dataByTag)
+      dataByTag[tagId].forEach((track) => {
+        trackOccurences.set(track, (trackOccurences.get(track) ?? 0) + 1);
+      });
+  });
+  
+  console.log("here!", type)
+
+  if(!type || type == "intersection") {
+    return Array.from(trackOccurences.entries()) //
+    .filter(([, occurences]) => occurences === tags.length)
+    .map(([track]) => track);
+  } else {
+    return Array.from(trackOccurences.keys());
+  }
 }
 
 export function updateComposition(id: string, composition: CompositionBase) {
