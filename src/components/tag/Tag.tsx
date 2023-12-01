@@ -78,10 +78,10 @@ export default function Tag({ sdkProps, tagId }: { sdkProps: SdkProps; tagId: st
   }, [trackMap]);
 
   return (
-    <div id="playlist-main" className="relative flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
-      <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
+    <div id="playlist-main" className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
+      {/* <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
         <AudioFeatures trackIds={trackEntries?.map(t => t.id)} />
-      </div>
+      </div> */}
 
       <div className="mt-16 flex flex-row pb-4">
         <div
@@ -110,6 +110,9 @@ export default function Tag({ sdkProps, tagId }: { sdkProps: SdkProps; tagId: st
             >
               Edit Tag
             </button>
+          </div>
+          <div className="my-1 pl-1">
+            <AudioFeatures trackIds={trackEntries?.map((t) => t.id)} />
           </div>
           <h2 className="text-5xl pt-1 text-white">{tag?.name}</h2>
           <p className="text-sm pl-[.1em] font-thin text-gray-200">Tag</p>

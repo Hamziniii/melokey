@@ -57,7 +57,7 @@ function HoverableFeature({ icon, value, message }: { icon: JSX.Element; value: 
 
 export default function AudioFeatures({ trackIds }: { trackIds: string[] }) {
   const sdkProps = useStore(sdkPropsAtom);
-  
+
   // const [acousticness, setAcousticness] = useState<number>(0);
   const [danceability, setDanceability] = useState<number>(0);
   const [energy, setEnergy] = useState<number>(0);
@@ -68,16 +68,16 @@ export default function AudioFeatures({ trackIds }: { trackIds: string[] }) {
   const [valence, setValence] = useState<number>(0);
 
   useEffect(() => {
-    if(!sdkProps) return;
+    if (!sdkProps) return;
 
     const sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
-    if(trackIds.length === 0) return;
+    if (trackIds.length === 0) return;
 
     trackIds = trackIds.slice(0, 100);
 
     sdk.tracks.audioFeatures(trackIds).then((features) => {
-      if(features.length === 0) return;
-      
+      if (features.length === 0) return;
+
       const data = {
         danceability: 0,
         energy: 0,
@@ -85,15 +85,15 @@ export default function AudioFeatures({ trackIds }: { trackIds: string[] }) {
         loudness: 0,
         speechiness: 0,
         valence: 0,
-      }
+      };
 
       features.forEach((feature) => {
-        for(const key in data) {
-            (data as any)[key] += (feature as any)[key];
+        for (const key in data) {
+          (data as any)[key] += (feature as any)[key];
         }
-      })
+      });
 
-      for(const key in data) {
+      for (const key in data) {
         (data as any)[key] = ((data as any)[key] / features.length).toFixed(2);
       }
 
@@ -103,15 +103,15 @@ export default function AudioFeatures({ trackIds }: { trackIds: string[] }) {
       setLoudness(data.loudness);
       setSpeechiness(data.speechiness);
       setValence(data.valence);
-    })
-  }, [trackIds])
+    });
+  }, [trackIds]);
 
   return (
     <>
       <section className="flex gap-3">
         <HoverableFeature icon={<DanceabilityIcon />} value={danceability} message="How much your music lends itself to dance" />
         <HoverableFeature icon={<EnergyIcon />} value={energy} message="How intense and active your music is" />
-        <HoverableFeature icon={<InstrumentIcon />} value={instrumentalness} message="How likely your music has no vocials" />
+        <HoverableFeature icon={<InstrumentIcon />} value={instrumentalness} message="How instrumental focused your music is" />
         <HoverableFeature icon={<LoudnessIcon />} value={loudness} message="How loud your music is" />
         <HoverableFeature icon={<SpeechinessIcon />} value={speechiness} message="How much your music focuses on vocals" />
         <HoverableFeature icon={<ValenceIcon />} value={valence} message="How cheerful your music is" />

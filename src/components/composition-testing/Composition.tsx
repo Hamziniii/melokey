@@ -137,11 +137,11 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
   }
 
   return (
-    <div id="playlist-main" className="relative flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
+    <div id="playlist-main" className="flex flex-col h-full w-full p-2 transition-all ease-in-out bg-gradient-to-b from-slate-900">
       {/* <style>{jankyCSS}</style> */}
-      <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
+      {/* <div className="absolute" style={{ top: "1.3rem", left: "1.3rem" }}>
         <AudioFeatures trackIds={tracks?.map(t => t.id)} />
-      </div>
+      </div> */}
 
       <div className="mt-16 flex flex-row pb-4">
         <div className="self-center flex-shrink-0 w-56 h-56 min-w-56 min-h-56 rounded-md bg-gray-900 text-gray-500">
@@ -177,7 +177,12 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
               Edit Composition
             </button>
           </div>
-          <p className="text-sm pl-1 font-thin text-gray-200">{(compositionData?.type == "union" ? "Union" : "Intersection")} of {tagNames.join(", ")}</p>
+          <div className="my-3 pl-1">
+            <AudioFeatures trackIds={tracks?.map((t) => t.id)} />
+          </div>
+          <p className="text-sm pl-1 font-thin text-gray-200">
+            {compositionData?.type == "union" ? "Union" : "Intersection"} of {tagNames.join(", ")}
+          </p>
           <p className="text-sm pl-1 font-thin text-gray-200">{compositionData?.description}</p>
           <h2 className="text-5xl pt-1 text-white">{compositionData?.name}</h2>
           <p className="text-sm pl-1 font-thin text-gray-200">Composition</p>
