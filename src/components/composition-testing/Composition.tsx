@@ -2,12 +2,13 @@ import { SpotifyApi, type SimplifiedPlaylist, type PlaylistedTrack, type Page, t
 import { useEffect, useState } from "react";
 import type { SdkProps } from "../../middleware";
 import { FastAverageColor } from "fast-average-color";
-import { getCompositionById, getTracksThatShareTags, type Composition } from "../../common-client/compositionsManagement";
+import { getCompositionById, getTracksThatShareTags, type Composition, resolveComposition } from "../../common-client/compositionsManagement";
 import { TrackRowItem } from "../playlist/Playlist";
 import DeleteComposition from "../modal/DeleteComposition";
 import { openModal } from "../modal/store";
 import EditComposition from "../modal/EditComposition";
 import AudioFeatures from "../audio-features/AudioFeatures";
+import { getTagById } from "../../common-client/tagManagement";
 
 function msToTime(duration: number) {
   const milliseconds = Math.floor((duration % 1000) / 100),
@@ -44,6 +45,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
   const [tracks, setTracks] = useState<Track[]>([]);
   const [color, setColor] = useState<string | null>(null);
   const [compositionData, setCompositionData] = useState<Composition | null | undefined>(null);
+  const [tagNames, setTagNames] = useState<string[]>([]);
 
   useEffect(() => {
     if (image) {
@@ -70,7 +72,15 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
       return setIsPageReady(true);
     }
 
-    const trackList = getTracksThatShareTags(composition.tags);
+    const names = composition.tags.reduce((acc, tagId) => {
+      const tag = getTagById(tagId);
+      if (tag) acc.push(tag.name);
+      return acc;
+    }, [] as string[]);
+
+    setTagNames(names);
+
+    const trackList = resolveComposition(composition.id);
     const _sdk = SpotifyApi.withAccessToken(sdkProps.clientId, sdkProps.token);
     setSdk(_sdk);
 
@@ -167,8 +177,8 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
               Edit Composition
             </button>
           </div>
+          <p className="text-sm pl-1 font-thin text-gray-200">{(compositionData?.type == "union" ? "Union" : "Intersection")} of {tagNames.join(", ")}</p>
           <p className="text-sm pl-1 font-thin text-gray-200">{compositionData?.description}</p>
-
           <h2 className="text-5xl pt-1 text-white">{compositionData?.name}</h2>
           <p className="text-sm pl-1 font-thin text-gray-200">Composition</p>
         </div>

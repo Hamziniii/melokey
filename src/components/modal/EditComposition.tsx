@@ -42,6 +42,7 @@ export default function EditComposition({ composition }: { composition: Composit
       name,
       description,
       tags,
+      type: (document.getElementById("type") as HTMLSelectElement)?.value as "union" | "intersection" || "intersection",
     });
     closeModal();
   }
@@ -60,6 +61,12 @@ export default function EditComposition({ composition }: { composition: Composit
 
         <label className="text-sm text-gray-400 font-thin">Description</label>
         <input id="name" className="bg-zinc-800 rounded-lg p-2 text-white" required defaultValue={description} onKeyUp={updateDescription} ref={descriptionRef} />
+
+        <label className="text-sm text-gray-400 font-thin pt-2">Type</label>
+        <select id="type" defaultValue={composition.type || "intersection"} className="block w-full p-2.5 bg-zinc-800 placeholder-gray-400 text-white rounded-lg">
+          <option value="union">Union</option>
+          <option value="intersection">Intersection</option>
+        </select>
 
         <div className="flex flex-row gap-2 mt-4 overflow-hidden" style={{ height: "300px" }}>
           <div className="flex flex-col flex-grow shrink-0">
