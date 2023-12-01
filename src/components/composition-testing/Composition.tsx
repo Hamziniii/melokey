@@ -156,7 +156,7 @@ export default function Composition({ sdkProps, compositionId }: { sdkProps: Sdk
               Delete Composition
             </button>
             <button
-              className="text-sm font-thin text-gray-400 underline hover:text-red-500 transition-colors ease-in-out duration-150 cursor-pointer select-none"
+              className="text-sm font-thin text-gray-400 underline transition-colors ease-in-out duration-150 cursor-pointer select-none hover:text-white"
               onClick={editComposition}
             >
               Edit Composition
