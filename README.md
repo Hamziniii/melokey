@@ -9,6 +9,7 @@ https://melokey.vercel.app/
 # Current features 
 - Get spotify playlists
 - Get current playback
+- Dynamic Playlists (our Tags and Composition functionality)
 - CRUD operation on tags
 - Tag song currently playing
 - Tag songs in playlist
