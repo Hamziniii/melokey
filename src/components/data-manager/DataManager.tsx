@@ -5,6 +5,8 @@ import { getEmail } from "../../globals/util";
 import { addToast } from "../toast/store";
 
 export function DataManager() {
+  const [origin, setOrigin] = useState<string>("");
+
   const [lastDownload, setLastDownload] = useState<Date | null>(null);
   const [lastUpload, setLastUpload] = useState<Date | null>(null);
 
@@ -19,7 +21,7 @@ export function DataManager() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:4321/api/mongo/timestamp?email=" + email, requestOptions)
+    fetch(origin + "/api/mongo/timestamp?email=" + email, requestOptions)
       .then((response) => response.text())
       .then((result) => {
         if (result.length === 0) {
@@ -33,6 +35,9 @@ export function DataManager() {
   }
 
   useEffect(() => {
+    const url = new URL(window.location.href);
+    setOrigin(url.origin);
+
     getLastDownload();
     getLastUpload();
   }, []);
@@ -45,7 +50,7 @@ export function DataManager() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:4321/api/mongo/combined?email=" + email, requestOptions)
+    fetch(origin + "/api/mongo/combined?email=" + email, requestOptions)
       .then((response) => response.text())
       .then((result) => {
         if (result.length === 0) {
@@ -77,7 +82,7 @@ export function DataManager() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:4321/api/mongo/combined", requestOptions)
+    fetch(origin + "/api/mongo/combined", requestOptions)
       .then((response) => response.text())
       .then((result) => {
         if (result == "Uploaded") {
